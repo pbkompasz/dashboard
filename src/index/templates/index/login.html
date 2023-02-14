@@ -1,0 +1,35 @@
+{% extends 'index/base.html' %}
+
+{% block base_content %}
+<form action="{% url 'login' %}" method="post">
+  {% csrf_token %}
+  <fieldset>
+      <legend><h1>Login</h1></legend>
+      <label>Username</label>
+      <input name="username" id="username">
+      <label>Password</label>
+      <input name="password" id="password">
+  </fieldset>
+  <input type="submit" value="Login">
+</form>
+
+  <div class="center">
+	  <form method="post" class="card" novalidate>
+	  	{% csrf_token %}
+	    <h2 class="text-center">Log in to your account</h2>
+		{% for field in form %}
+	    		{{ field.label_tag }} 
+	        	{{ field }}
+	        	{% if field.errors %}
+	        		<small>{{ field.errors|striptags }}</small> 
+	        	{% endif %}
+		{% endfor %}
+		
+		<input type="submit" value="Login" class="btn btn-primary full-width">
+		<hr>
+		<p class="text-center">Forgot your password <a href="#">Reset Password</a></p>
+		<p class="text-center">Don't have a account? <a href="#">Join Now</a></p>
+	</form>
+</div>
+
+{% endblock base_content  %}

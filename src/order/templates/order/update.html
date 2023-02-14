@@ -1,0 +1,7 @@
+{{ order.id }}
+{% if order.status !== 'production' %}
+  <a href='order/{{order.id}}/cancel'>Cancel</a>
+{% endif %}
+{% if !order.has_shipped %}
+  Change address
+{% endif %}

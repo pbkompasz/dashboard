@@ -1,0 +1,21 @@
+<h1>Payments</h1>
+
+<h2>Paid invoices</h2>
+<ul>
+  {% for invoice in invoices_payed %}
+    <li>
+      <a href="invoices/{{invoice.id}}">{{invoice.id}}</a>
+      {{ invoice.date_approved }}
+      {{ invoice.date_paid }}
+    </li>
+  {% endfor %}
+</ul>
+
+<h2>Added Payment Methods</h2>
+<ul>
+  {% for payment_method in payment_methods %}
+    <li>
+      {{ payment_method.type }}
+    </li>
+  {% endfor %}
+</ul>

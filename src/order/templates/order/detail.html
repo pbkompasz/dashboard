@@ -1,0 +1,19 @@
+{% extends 'order/base.html' %}
+
+{% block content %}
+{% if cart %}
+
+  Items
+  {% for item in cart.items %}  
+    {{ item.id }}
+  {% endfor %}
+  From
+  {{ cart.store }}
+  To
+  {{ cart.client_city }}
+  Status:
+  {{ cart.current_status.status.name }}
+{% else %}
+  <p>No such order.</p>
+{% endif %}
+{% endblock content %}

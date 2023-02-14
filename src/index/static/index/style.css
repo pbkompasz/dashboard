@@ -1,0 +1,18 @@
+#sidebar>ul {
+  display: flex;
+  flex-direction: column;
+}
+
+#sidebar {
+  flex: 1;
+  border-right: solid;
+}
+
+#content {
+  flex: 6;
+}
+
+body {
+  display: flex;
+  min-height: 90vh;
+}
