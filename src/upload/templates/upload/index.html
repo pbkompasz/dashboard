@@ -4,9 +4,11 @@
 {% block content %}
   <form action="{% url 'index' %}" method="post">
     {% csrf_token %}
-    <input type="file" accept=".csv" label="Select CSV"></input>
+    <input type="file" accept=".csv" name="file"></input>
+    <input type="submit" value="Submit">
   </form>
   <div class="list">
+    <h2>Uploaded forms</h2>
     <ul>
     {% for file in files %}
       <li>{{file.id}}</li>

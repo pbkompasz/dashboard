@@ -1,23 +1,28 @@
 {% extends 'catalog/base.html' %}
 
 {% block content %}
-  {% if products%}
-    <ul>
-      {% for product in products %}
-        <li>
-          {{ product.name }}
+  {% if product_list %}
+    <div class="products">
+      {% for product in product_list %}
+        <div>
+          <h3 class="name">{{ product.name }}</h3>
           {% if product.is_private %}
-            Private
-            {{ product.belongs_to.name }}
+            <a href="/dashboard/catalog/{{product.id}}/update">Update</a>
           {% endif %}
-          Details
-            Width
-            {{ product.product_size.width }}
-            Height
-            {{ product.product_size.height }}
-        </li> 
+          <div>
+          <div class="name">Details</div>
+            <div>
+              Width
+              {{ product.product_size.width }}
+            </div>
+            <div>
+              Height
+              {{ product.product_size.height }}
+            </div>
+          </div>
+        </div> 
       {% endfor %}
-    </ul>
+    </div>
   {% else %}
     No items
   {% endif %}

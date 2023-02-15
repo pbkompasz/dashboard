@@ -10,17 +10,11 @@ class Status(models.Model):
   color = models.CharField(max_length=10)
 
 class CartItem(models.Model):
-  product = models.ForeignKey(Product, on_delete=models.CASCADE)
+  product = models.ManyToManyField(Product)
   product_size = models.IntegerField()
   quantity = models.IntegerField()
   cost = models.IntegerField()
   # image = models.ImageField()
-
-class CartStatus(models.Model):
-  status = models.ForeignKey(Status, on_delete=models.CASCADE)
-  current = models.BooleanField(default = False)
-  date_started = models.DateField(default=datetime.date.today)
-  date_completed = models.DateField()
 
 class Cart(models.Model):
   store = models.CharField(max_length=15)
@@ -34,10 +28,21 @@ class Cart(models.Model):
   client_email = models.CharField(max_length=20)
   client_phone = models.CharField(max_length=10)
   total_cost = models.IntegerField()
-  # current_status = models.OneToOneField(
-  #   CartStatus,
-  #   on_delete=models.CASCADE,
-  #   blank=True, null=True
-  # )
-  # invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE, blank=True, null=True)
+  invoice = models.OneToOneField(
+    Invoice,
+    on_delete=models.CASCADE,
+    blank=True, null=True
+  )
 
+  def create_order(self, data):
+    print(data)
+
+class CartStatus(models.Model):
+  status = models.ForeignKey(Status, on_delete=models.CASCADE)
+  current = models.BooleanField(default = False)
+  date_started = models.DateField(default=datetime.date.today)
+  date_completed = models.DateField(blank=True, null=True)
+  cart = models.OneToOneField(
+    Cart,
+    on_delete=models.CASCADE,
+  )

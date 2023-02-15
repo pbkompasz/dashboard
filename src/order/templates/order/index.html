@@ -13,9 +13,9 @@
     {% for cart in cart_list %}
     <tr>
       <td><a href="{% url 'detail' cart.id %}">{{ cart.id }}</a></td>
-      <td>{{ cart.cart_status.status.name }}</td>
+      <td>{{ cart.cart_status }}</td>
       <td>{{ cart.cart_status.date_start }}</td>
-      <td>{{ cart.cost }}</td>
+      <td>{{ cart.total_cost }}</td>
       <td><a href="{% url 'update' cart.id %}">Update</a></td>
     </tr>
     {% endfor %}

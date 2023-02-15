@@ -18,8 +18,19 @@ class UploadIndexView(ListView):
   context_object_name = 'files'
 
   def post(self, *args, **kwargs):
+    print(self.request.POST)
+    return render(self.request, 'upload/index.html')
 
-    pass
+
+
+
+
+
+
+
+
+
+
 
 
 # class CartUploadCSV(CurrentStore, TemplateView):

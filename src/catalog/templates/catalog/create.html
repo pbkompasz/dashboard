@@ -2,17 +2,29 @@
 
 {% block content %}
 <h1>Create private product</h1>
-{% comment %} <form action="{% url 'product:create' product.id %}" method="post">
-{% csrf_token %} {% endcomment %}
+<form action="{% url 'create' %}" method="post">
+  {% csrf_token %}
 
-{% comment %} <fieldset>
-    <legend><h1>{{ question.question_text }}</h1></legend>
-    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-    {% for choice in question.choice_set.all %}
-        <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
-        <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
-    {% endfor %}
-</fieldset> {% endcomment %}
-{% comment %} <input type="submit" value="Create">
-</form> {% endcomment %}
+  <fieldset>
+      <h2>General</h2>
+      <div>
+        <label>Name</label>
+        <input name="name" type="text"></input>
+      </div>
+      <div>
+        <label>Cut file</label>
+        <input name="cut_file" type="file" accept=".csv"></input>
+      </div>
+      <h2>Product Size</h2>
+      <div>
+        <label>Width</label>
+        <input name="product_size_width"></input>
+      </div>
+      <div>
+        <label>Height</label>
+        <input name="product_size_height"></input>
+      </div>
+  </fieldset>
+  <input type="submit" value="Create">
+</form>
 {% endblock content %}
