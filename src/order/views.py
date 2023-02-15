@@ -19,12 +19,20 @@ class OrderDetailView(DetailView):
   model = Cart
 
 
-def detail(request):
-  context = {
-    order_id,
-  }
-  return render(request, 'order/detail.html', context)
+# TODO Check if Order is in production
+def cancel(request):
 
+  if (request.POST):
+    return render(request, 'order/index.html')
+
+  return render(request, 'order/index.html')
+
+# TODO Check if Order has not shipped
 class OrderUpdateView(DetailView):
   template_name = 'order/update.html'  
   model = Cart
+
+  def post(self, *args, **kwargs):
+    # if (not_in_production(1)):
+    pass 
+

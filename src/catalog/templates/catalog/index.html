@@ -1,22 +1,26 @@
-<h1>Catalog</h1>
+{% extends 'catalog/base.html' %}
 
-{% if products%}
-  <ul>
-    {% for product in products %}
-      <li>
-        {{ product.name }}
-        {% if product.is_private %}
-           Private
-          {{ product.belongs_to.name }}
-        {% endif %}
-        Details
-          Width
-          {{ product.product_size.width }}
-          Height
-          {{ product.product_size.height }}
-      </li> 
-    {% endfor %}
-  </ul>
-{% else %}
-  No items
-{% endif %}
+{% block content %}
+  {% if products%}
+    <ul>
+      {% for product in products %}
+        <li>
+          {{ product.name }}
+          {% if product.is_private %}
+            Private
+            {{ product.belongs_to.name }}
+          {% endif %}
+          Details
+            Width
+            {{ product.product_size.width }}
+            Height
+            {{ product.product_size.height }}
+        </li> 
+      {% endfor %}
+    </ul>
+  {% else %}
+    No items
+  {% endif %}
+  <br/>
+  <a href="{% url 'create' %}">Create product</a>
+{% endblock content %}

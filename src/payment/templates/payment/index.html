@@ -1,21 +1,46 @@
-<h1>Payments</h1>
+{% extends 'payment/base.html' %}
 
-<h2>Paid invoices</h2>
-<ul>
-  {% for invoice in invoices_payed %}
-    <li>
-      <a href="invoices/{{invoice.id}}">{{invoice.id}}</a>
-      {{ invoice.date_approved }}
-      {{ invoice.date_paid }}
-    </li>
-  {% endfor %}
-</ul>
+{% block content %}
+  <h2>Paid invoices</h2>
+  <table>
+    <tr>
+      <th>Id</th>
+      <th>Date Approved</th>
+      <th>Date Paid</th>
+    </tr>
+    {% for invoice in invoices_payed %}
+      <tr>
+        <td><a href="{% url 'download' invoice.id %}">{{ invoice.id }}</a></td>
+        <td>{{ invoice.date_approved }}</td>
+        <td>{{ invoice.date_paid }}</td>
+      </tr>
+    {% endfor %}
+  </table>
 
 <h2>Added Payment Methods</h2>
-<ul>
-  {% for payment_method in payment_methods %}
-    <li>
-      {{ payment_method.type }}
-    </li>
-  {% endfor %}
-</ul>
+  {% if not payment_methods %}
+    <div class="warn">
+      No payment methods
+    </div>
+  {% else %}
+    <table>
+      <tr>
+        <th>Name</th>
+        <th>Token</th>
+        <th>Update</th>
+        <th>Remove</th>
+      </tr>
+      {% for payment_method in payment_methods %}
+        <tr>
+          <td>{{ payment_method.name }}</td>
+          <td>{{ payment_method.token }}</td>
+          <td><a href="{% url 'update_payment_method' payment_method.id %}">Update</a></td>
+          <td><a href="{% url 'remove_payment_method' payment_method.id %}">Remove</a></td>
+        </tr>
+        <li>
+          {{ payment_method.type }}
+        </li>
+      {% endfor %}
+      </table>
+  {% endif %}
+{% endblock content %}

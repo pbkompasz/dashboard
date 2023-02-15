@@ -1,6 +1,9 @@
+{% extends 'catalog/base.html' %}
+
+{% block content %}
 <h1>Create private product</h1>
-<form action="{% url 'product:create' product.id %}" method="post">
-{% csrf_token %}
+{% comment %} <form action="{% url 'product:create' product.id %}" method="post">
+{% csrf_token %} {% endcomment %}
 
 {% comment %} <fieldset>
     <legend><h1>{{ question.question_text }}</h1></legend>
@@ -10,5 +13,6 @@
         <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
     {% endfor %}
 </fieldset> {% endcomment %}
-<input type="submit" value="Create">
-</form>
+{% comment %} <input type="submit" value="Create">
+</form> {% endcomment %}
+{% endblock content %}

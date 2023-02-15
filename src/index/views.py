@@ -20,6 +20,7 @@ def index(request):
 
 # @login_required(redirect_field_name='my_redirect_field')
 def dashboard(request):
+  print('here')
   return render(request, 'index/dashboard.html')
   pass
 
@@ -47,9 +48,9 @@ class LoginView(views.LoginView):
   template_name='index/login.html'
   redirect_authenticated_user = True
 
-  def get_success_url(self):
-    print('here')
-    return reverse_lazy('tasks') 
+  # def get_success_url(self):
+  #   print('here')
+  #   # return reverse_lazy('tasks') 
 
   def form_invalid(self, form):
     print('invlaid')

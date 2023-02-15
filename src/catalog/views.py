@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.generic import DetailView, ListView, CreateView, UpdateView
+from django.views import View
 
 from .models import Product
 
@@ -13,6 +14,7 @@ class ProductListView(ListView):
 class ProductCreateView(CreateView):
   template_name = 'catalog/create.html'
   model = Product
+  fields = ['name']
 
 class ProductUpdateView(UpdateView):
   template_name = 'catalog/update.html'

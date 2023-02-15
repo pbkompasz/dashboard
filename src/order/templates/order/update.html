@@ -1,7 +1,31 @@
-{{ order.id }}
-{% if order.status !== 'production' %}
-  <a href='order/{{order.id}}/cancel'>Cancel</a>
-{% endif %}
-{% if !order.has_shipped %}
-  Change address
-{% endif %}
+{% extends 'order/base.html' %}
+
+{% block content %}
+  <h2>#{{ cart.id }}</h2>
+  {% if not cart.current_status.status == 'production' %}
+    <form action="{% url 'cancel_order' cart.id %}" method="post">
+      {% csrf_token %}
+      <input type="submit" value="Cancel Order">
+    </form>
+  {% endif %}
+  {% if not order.has_shipped %}
+    <form action="{% url 'update' cart.id %}" method="post">
+      {% csrf_token %}
+      <fieldset>
+        <legend><h1>Change address</h1></legend>
+          {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+          <label>Address</label>
+          <input type="text" name="client_address" id="client_address" value="{{ cart.client_address }}">
+          <label>Address2</label>
+          <input type="text" name="client_address2" id="client_address2" value="{{ cart.client_address2 }}">
+          <label>City</label>
+          <input type="text" name="client_city" id="client_city" value="{{ cart.client_city }}">
+          <label>Zip</label>
+          <input type="text" name="client_zip" id="client_zip" value="{{ cart.client_zip }}">
+          <label>State</label>
+          <input type="text" name="client_state" id="client_state" value="{{ cart.client_state }}">
+      </fieldset>
+      <input type="submit" value="Change Address">
+    </form>
+  {% endif %}
+{% endblock content %}

@@ -1,2 +1,16 @@
-<h1>Upload CSV</h1>
+{% extends 'upload/base.html' %}
 
+
+{% block content %}
+  <form action="{% url 'index' %}" method="post">
+    {% csrf_token %}
+    <input type="file" accept=".csv" label="Select CSV"></input>
+  </form>
+  <div class="list">
+    <ul>
+    {% for file in files %}
+      <li>{{file.id}}</li>
+    {% endfor %}
+    </ul>
+  </div>
+{% endblock content %}

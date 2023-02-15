@@ -13,6 +13,7 @@ class CartItem(models.Model):
   product = models.ForeignKey(Product, on_delete=models.CASCADE)
   product_size = models.IntegerField()
   quantity = models.IntegerField()
+  cost = models.IntegerField()
   # image = models.ImageField()
 
 class CartStatus(models.Model):
@@ -32,6 +33,7 @@ class Cart(models.Model):
   client_state = models.CharField(max_length=15)
   client_email = models.CharField(max_length=20)
   client_phone = models.CharField(max_length=10)
+  total_cost = models.IntegerField()
   # current_status = models.OneToOneField(
   #   CartStatus,
   #   on_delete=models.CASCADE,

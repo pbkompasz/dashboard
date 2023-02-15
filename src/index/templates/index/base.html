@@ -20,11 +20,14 @@
     <div id="sidebar">
         {% block sidebar %}
         {% if is_logged_in %}
+        <div> Welcome, {{ user }}</div>
         <ul>
-          <li><a href="{% url 'order' %}">Orders</a></li>
-          <li><a href="{% url 'catalog' %}">Catalog</a></li>
-          <li><a href="{% url 'upload' %}">Upload</a></li>
-          <li><a href="{% url 'payments' %}">Payments</a></li>
+          <li><a href="/dashboard/orders">Orders</a></li>
+          <li><a href="/dashboard/catalog">Catalog</a></li>
+          <li><a href="/dashboard/upload">Upload</a></li>
+          <li><a href="/dashboard/payments">Payments</a></li>
+          {% comment %} TODO {% endcomment %}
+          <li><a href="{% url 'dashboard' %}">Logout</a></li>
         </ul>
         {% else %}
         <ul>

@@ -21,11 +21,8 @@ from django.contrib.auth.decorators import login_required
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('index.urls')),
-    path('dashboard/catalog/', login_required(include('catalog.urls')), name='catalog'),
-    path('dashboard/order/', login_required(include('order.urls')), name='order'),
-    # path('dashboard/order/', include('order.urls'), name='order'),
-    path('dashboard/payment/', login_required(include('payment.urls')), name='payments'),
-    path('dashboard/upload/', login_required(include('upload.urls')), name='upload'),
-    # path('', auth_views.LoginView.as_view(redirect_authenticated_user=True), name='login'),
-
+    path('dashboard/catalog/', include('catalog.urls'), name='catalog'),
+    path('dashboard/orders/', include('order.urls'), name='order'),
+    path('dashboard/payments/', (include('payment.urls')), name='payments'),
+    path('dashboard/upload/', (include('upload.urls')), name='upload'),
 ]

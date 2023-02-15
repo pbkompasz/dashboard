@@ -1,20 +1,26 @@
-{{ cart_list }}
+{% extends 'order/base.html' %}
 
-{% if cart_list %}
-    <ul>
-      <li>
-
-      </li>
+{% block content %}
+  {% if cart_list %}
+  <table>
+    <tr>
+      <th>Id</th>
+      <th>Status</th>
+      <th>Date Placed</th>
+      <th>Order Cost</th>
+      <th>Update</th>
+    </tr>
     {% for cart in cart_list %}
-        <li>
-          <a href="{% url 'detail' cart.id %}">{{ cart.id }}</a>
-          {{ cart.status }}
-          {{ cart.date_start }}
-          {{ cart.cost }}
-          <a href="/orders/update/{{ cart.id }}/">Update</a>
-        </li>
+    <tr>
+      <td><a href="{% url 'detail' cart.id %}">{{ cart.id }}</a></td>
+      <td>{{ cart.cart_status.status.name }}</td>
+      <td>{{ cart.cart_status.date_start }}</td>
+      <td>{{ cart.cost }}</td>
+      <td><a href="{% url 'update' cart.id %}">Update</a></td>
+    </tr>
     {% endfor %}
-    </ul>
-{% else %}
-    <p>No orders.</p>
-{% endif %}
+  </table>
+  {% else %}
+      <p>No orders.</p>
+  {% endif %}
+{% endblock content %}

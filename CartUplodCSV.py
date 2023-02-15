@@ -1,29 +1,4 @@
-from django.shortcuts import render
-from django.views.generic import ListView
-
-from .models import UploadedFile
-
-# Create your views here.
-
-def process_csv():
-  pass
-
-# Create order(s)
-def create_invoice():
-  pass
-
-class UploadIndexView(ListView):
-  model = UploadedFile
-  template_name = 'upload/index.html'
-  context_object_name = 'files'
-
-  def post(self, *args, **kwargs):
-
-    pass
-
-
-# class CartUploadCSV(CurrentStore, TemplateView):
-class CartUploadCSV():
+class CartUploadCSV(CurrentStore, TemplateView):
     template_name = "dashboard/orders/upload.html"
 
     def get_context_data(self, *args, **kwargs):
@@ -267,4 +242,3 @@ class CartUploadCSV():
 
         context = self.get_context_data(**kwargs)
         return HttpResponseRedirect(reverse('invoice-detail', kwargs={'pk': new_invoice.id}))
-
