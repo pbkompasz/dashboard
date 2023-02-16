@@ -5,7 +5,7 @@ from django.utils.datastructures import MultiValueDictKeyError
 from django.contrib import messages
 from django.core.mail import send_mail
 
-from .models import UploadedFile
+from .models import UploadedFile, STRUCT
 from payment.models import Invoice
 from order.models import Cart, CartItem, CartStatus
 from catalog.models import Product
@@ -14,101 +14,6 @@ import csv
 import datetime
 
 # Create your views here.
-struct = [
-    {
-      'variable_name': 'order_number',
-      'column_names': ['Code', 'code'],
-      'default': None,
-    }, {
-      'variable_name': 'product',
-      'column_names': ['Product Type', 'SKU'],
-      'default': None,
-    }, {
-      'variable_name': 'designx',
-      'column_names': ['Main design file name (.png)'],
-      'default': None,
-    }, {
-      'variable_name': 'designd',
-      'column_names': ['Dad title image file (.png)'],
-      'default': None,
-    }, {
-      'variable_name': 'designm',
-      'column_names': ['Mom title image file (.png)'],
-      'default': None,
-    }, {
-      'variable_name': 'designb',
-      'column_names': ["Baby's name (Text)", "Baby’s name (Text)", "Baby`s name (Text)"],
-      'default': None,
-    }, {
-      'variable_name': 'papa',
-      'column_names': ['Dad Tshirt Size'],
-      'default': None,
-    }, {
-      'variable_name': 'mama',
-      'column_names': ['Mom Tshirt Size'],
-      'default': None,
-    }, {
-      'variable_name': 'baby',
-      'column_names': ["Baby's OneSie Size", "Baby’s OneSie Size", "Baby`s OneSie Size"],
-      'default': None,
-    }, {
-      'variable_name': 'variant',
-      'column_names': ['size', 'Size'],
-      'default': None,
-    }, {
-      'variable_name': 'full_name',
-      'column_names': ['Shipping Fullname'],
-      'default': None,
-    }, {
-      'variable_name': 'phone',
-      'column_names': ['Phone'],
-      'default': None,
-    }, {
-      'variable_name': 'date_completed',
-      'column_names': ['order date'],
-      'default': "",
-    }, {
-      'variable_name': 'email',
-      'column_names': ['Email'],
-      'default': None,
-    }, {
-      'variable_name': 'address',
-      'column_names': ['Address1'],
-      'default': None,
-    }, {
-      'variable_name': 'address_2',
-      'column_names': ['Address2'],
-      'default': None,
-    }, {
-      'variable_name': 'city',
-      'column_names': ['City'],
-      'default': None,
-    }, {
-      'variable_name': 'state',
-      'column_names': ['Province'],
-      'default': None,
-    }, {
-      'variable_name': 'zip',
-      'column_names': ['Zip'],
-      'default': None,
-    }, {
-      'variable_name': 'country',
-      'column_names': ['Country Code'],
-      'default': None,
-    }, {
-      'variable_name': 'qty',
-      'column_names': ['UnFulfill Quantity', 'Qty'],
-      'default': None,
-    }, {
-      'variable_name': 'frurla',
-      'column_names': ['Printer Design Url Front'],
-      'default': None,
-    }, {
-      'variable_name': 'brurla',
-      'column_names': ['Printer Design Url Back'],
-      'default': None,
-    },
-  ]
 
 
 
@@ -159,7 +64,7 @@ class UploadIndexView(ListView):
       
     header_descriptor['order_number'] = order_number 
       
-    for s in struct: 
+    for s in STRUCT: 
       pos = None
       for c_name in s['column_names']:
         try:
@@ -268,21 +173,22 @@ class UploadIndexView(ListView):
             from_email='info@mayamedia.io', recipient_list=['info@mayamedia.io'], fail_silently=True
           )
 
-        try:
-          po, created = PrintableOption.objects.get_or_create(
-            size_display=row[header_descriptor['variant']], parent=parent_po)
-          if created:
-            send_mail(
-              subject='New Gossby Product - PrintableOption',
-              message='New Gossby Product - %s' % po.id,
-              from_email='info@mayamedia.io', recipient_list=['info@mayamedia.io'], fail_silently=True
-            )
-        except:
-          try:
-            po = PrintableOption.objects.filter(
-              size_display=row[header_descriptor['variant']], parent=parent_po).first()
-          except:
-            po = None
+        # Not required
+        # try:
+        #   po, created = PrintableOption.objects.get_or_create(
+        #     size_display=row[header_descriptor['variant']], parent=parent_po)
+        #   if created:
+        #     send_mail(
+        #       subject='New Gossby Product - PrintableOption',
+        #       message='New Gossby Product - %s' % po.id,
+        #       from_email='info@mayamedia.io', recipient_list=['info@mayamedia.io'], fail_silently=True
+        #     )
+        # except:
+        #   try:
+        #     po = PrintableOption.objects.filter(
+        #       size_display=row[header_descriptor['variant']], parent=parent_po).first()
+        #   except:
+        #     po = None
 
         try:
           # ???

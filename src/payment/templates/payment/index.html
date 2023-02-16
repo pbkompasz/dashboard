@@ -8,13 +8,21 @@
       <th>Date Approved</th>
       <th>Date Paid</th>
     </tr>
-    {% for invoice in invoices_payed %}
+    {% if invoices_payed %}
+      {% for invoice in invoices_payed %}
+        <tr>
+          <td><a href="{% url 'download' invoice.id %}">{{ invoice.id }}</a></td>
+          <td>{{ invoice.date_approved }}</td>
+          <td>{{ invoice.date_paid }}</td>
+        </tr>
+      {% endfor %}
+    {% else %}
       <tr>
-        <td><a href="{% url 'download' invoice.id %}">{{ invoice.id }}</a></td>
-        <td>{{ invoice.date_approved }}</td>
-        <td>{{ invoice.date_paid }}</td>
+        <td colspan="1000" style="text-align: center;">
+          No paid invoices
+        </td>
       </tr>
-    {% endfor %}
+    {% endif %}
   </table>
 
 <h2>Added Payment Methods</h2>
