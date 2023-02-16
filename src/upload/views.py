@@ -14,16 +14,137 @@ import csv
 import datetime
 
 # Create your views here.
+struct = [
+    {
+      'variable_name': 'order_number',
+      'column_names': ['Code', 'code'],
+      'default': None,
+    }, {
+      'variable_name': 'product',
+      'column_names': ['Product Type', 'SKU'],
+      'default': None,
+    }, {
+      'variable_name': 'designx',
+      'column_names': ['Main design file name (.png)'],
+      'default': None,
+    }, {
+      'variable_name': 'designd',
+      'column_names': ['Dad title image file (.png)'],
+      'default': None,
+    }, {
+      'variable_name': 'designm',
+      'column_names': ['Mom title image file (.png)'],
+      'default': None,
+    }, {
+      'variable_name': 'designb',
+      'column_names': ["Baby's name (Text)", "Baby’s name (Text)", "Baby`s name (Text)"],
+      'default': None,
+    }, {
+      'variable_name': 'papa',
+      'column_names': ['Dad Tshirt Size'],
+      'default': None,
+    }, {
+      'variable_name': 'mama',
+      'column_names': ['Mom Tshirt Size'],
+      'default': None,
+    }, {
+      'variable_name': 'baby',
+      'column_names': ["Baby's OneSie Size", "Baby’s OneSie Size", "Baby`s OneSie Size"],
+      'default': None,
+    }, {
+      'variable_name': 'variant',
+      'column_names': ['size', 'Size'],
+      'default': None,
+    }, {
+      'variable_name': 'full_name',
+      'column_names': ['Shipping Fullname'],
+      'default': None,
+    }, {
+      'variable_name': 'phone',
+      'column_names': ['Phone'],
+      'default': None,
+    }, {
+      'variable_name': 'date_completed',
+      'column_names': ['order date'],
+      'default': "",
+    }, {
+      'variable_name': 'email',
+      'column_names': ['Email'],
+      'default': None,
+    }, {
+      'variable_name': 'address',
+      'column_names': ['Address1'],
+      'default': None,
+    }, {
+      'variable_name': 'address_2',
+      'column_names': ['Address2'],
+      'default': None,
+    }, {
+      'variable_name': 'city',
+      'column_names': ['City'],
+      'default': None,
+    }, {
+      'variable_name': 'state',
+      'column_names': ['Province'],
+      'default': None,
+    }, {
+      'variable_name': 'zip',
+      'column_names': ['Zip'],
+      'default': None,
+    }, {
+      'variable_name': 'country',
+      'column_names': ['Country Code'],
+      'default': None,
+    }, {
+      'variable_name': 'qty',
+      'column_names': ['UnFulfill Quantity', 'Qty'],
+      'default': None,
+    }, {
+      'variable_name': 'frurla',
+      'column_names': ['Printer Design Url Front'],
+      'default': None,
+    }, {
+      'variable_name': 'brurla',
+      'column_names': ['Printer Design Url Back'],
+      'default': None,
+    },
+  ]
+
+
 
 class UploadIndexView(ListView):
   model = UploadedFile
   template_name = 'upload/index.html'
   context_object_name = 'files'
 
+  def get_context_data(self, *args, **kwargs):
+    ctx = super().get_context_data(*args, **kwargs)
+    ctx['partners'] = User.objects.filter(
+        is_superuser=False, is_staff=False)
+    return ctx
+
+  def post(self, *args, **kwargs):
+    partner = self.request.POST.get('partner')
+
+    try:
+      csv_file = self.request.FILES["file"].file.read().decode(
+          'utf-8-sig').splitlines()
+    except MultiValueDictKeyError:
+      print('TODO')
+      return render(self.request, 'upload/index.html')
+
+    header_descriptor = self.process_csv_header(csv_file)
+    print(header_descriptor)
+    # new_invoice = self.create_invoice() 
+    # cart = self.create_cart() 
+    # self.process_csv_body(csv_file, header_descriptor, partner, cart)
+    # return render(self.request, 'upload/index.html', {'new_invoice_id': new_invoice.id}, )
+    return render(self.request, 'upload/index.html', )
 
   def process_csv_header(self, csv_file):
     reader = csv.reader(csv_file, delimiter=';')
     first_row = next(reader)
+    header_descriptor = {}
 
     try:
       order_number = first_row.index('Code')
@@ -35,89 +156,21 @@ class UploadIndexView(ListView):
       except:
         print('Missing order number')
         # Return
-
-    
-
-    try:
-      product = first_row.index('Product Type')
-    except:
-      product = first_row.index('SKU')
-
-    try:
-      designx = first_row.index('Main design file name (.png)')
-      designd = first_row.index('Dad title title image file (.png)')
-      designm = first_row.index('Mom title image file (.png)')
-      designb = first_row.index("Baby's name (Text)")
-      papa = first_row.index("Dad Tshirt Size")
-      mama = first_row.index("Mom Tshirt Size")
-      baby = first_row.index("Baby's OneSie Size")
-    except:
-      pass
-
-    
-    try:
-      variant = first_row.index('size')
-    except:
-      try:
-        variant = first_row.index('Size')
-      except:
-        variant = None
-
-    full_name = first_row.index('Shipping Fullname')
-    phone = first_row.index('Phone')
-
-    try:
-      date_completed = first_row.index('order date')
-    except:
-      date_completed = ""
-
-    
-    email = first_row.index('Email')
-    address = first_row.index('Address1')
-    address_2 = first_row.index('Address2')
-    city = first_row.index('City')
-    state = first_row.index('Province')
-    zip = first_row.index('Zip')
-    country = first_row.index('Country Code')
-
-    try:
-        qty = first_row.index('UnFulfill Quantity')
-    except:
-        qty = first_row.index('Qty')
-    frurla = first_row.index('Printer Design Url Front')
-
-    try:
-        brurla = first_row.index('Printer Design Url Back')
-    except:
-        brurla = None
-
-    header_descriptor = {
-      'order_number': order_number,
-      'product': product,
-      'designx': designx,
-      'designd': designd,
-      'designm': designm,
-      'designb': designb,
-      'papa': papa,
-      'mama': mama,
-      'baby': baby,
-      'variant': variant,
-      'full_name': full_name,
-      'phone': phone,
-      'date_completed': date_completed,
-      'email': email,
-      'address': address,
-      'address_2': address_2,
-      'city': city,
-      'state': state,
-      'zip': zip,
-      'country': country,
-      'qty': qty,
-      'frurla': frurla,
-      'brurla': brurla,
-    }
+      
+    header_descriptor['order_number'] = order_number 
+      
+    for s in struct: 
+      pos = None
+      for c_name in s['column_names']:
+        try:
+          pos = first_row.index(c_name)
+          break
+        except:
+          pass
+      header_descriptor[s['variable_name']] = pos if pos is not None else s['default']
 
     return header_descriptor
+
 
   def process_csv_body(self, csv_file, header_descriptor, partner, cart):
     new_carts = []
@@ -330,27 +383,3 @@ class UploadIndexView(ListView):
     new_cart = Cart.objects.create()
     return new_cart
 
-  def get_context_data(self, *args, **kwargs):
-    ctx = super().get_context_data(*args, **kwargs)
-    ctx['partners'] = User.objects.filter(
-        is_superuser=False, is_staff=False)
-    return ctx
-
-  def post(self, *args, **kwargs):
-    print(self.request.POST)
-
-    context = self.get_context_data(**kwargs)
-
-    partner = self.request.POST.get('partner')
-    try:
-      csv_file = self.request.FILES["file"].file.read().decode(
-          'utf-8-sig').splitlines()
-    except MultiValueDictKeyError:
-      print('TODO')
-      return render(self.request, 'upload/index.html')
-
-    new_invoice = self.create_invoice() 
-    cart = self.create_cart() 
-    header_descriptor = self.process_csv_header(csv_file)
-    self.process_csv_body(csv_file, header_descriptor, partner, cart)
-    return render(self.request, 'upload/index.html', {'new_invoice_id': new_invoice.id}, )
