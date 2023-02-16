@@ -21,9 +21,7 @@ def index(request):
 
 # @login_required(redirect_field_name='my_redirect_field')
 def dashboard(request):
-  print('here')
   return render(request, 'index/dashboard.html')
-  pass
 
 class SignupView(View):
   template_name = 'index/signup.html'

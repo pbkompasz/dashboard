@@ -2,9 +2,9 @@
 
 
 {% block content %}
-  <form action="{% url 'index' %}" method="post">
+  <form action="{% url 'index' %}" method="post" enctype='multipart/form-data'>
     {% csrf_token %}
-    <input type="file" accept=".csv" name="file"></input>
+    <input type="file" accept=".csv" name="file" required></input>
     <input type="submit" value="Submit">
   </form>
   <div class="list">
