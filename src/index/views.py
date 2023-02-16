@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.views import View
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import authenticate, login, views
+from django.contrib.auth import authenticate, login, views, logout as auth_logout
 from django.urls import reverse_lazy
 from django.contrib import messages
 
@@ -11,6 +11,7 @@ from django.contrib import messages
 # Create your views here.
 
 def is_logged_in(request):
+  print('is')
   return request.user.is_authenticated
 
 def index(request):
@@ -48,14 +49,19 @@ class LoginView(views.LoginView):
   template_name='index/login.html'
   redirect_authenticated_user = True
 
-  # def get_success_url(self):
-  #   print('here')
-  #   # return reverse_lazy('tasks') 
+  def get_success_url(self):
+    return reverse_lazy('dashboard') 
 
   def form_invalid(self, form):
-    print('invlaid')
     messages.error(self.request,'Invalid username or password')
     return self.render_to_response(self.get_context_data(form=form)) 
+
+def logout(request):
+
+  if (request.method == 'GET'):
+    auth_logout(request)
+    return redirect('dashboard', )
+
 
 # class RegisterView():
 #   def get(self):

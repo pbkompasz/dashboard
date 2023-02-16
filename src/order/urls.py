@@ -1,9 +1,11 @@
 from django.urls import path
+from django.contrib.auth.decorators import login_required
+
 from . import views
 
 urlpatterns = [
-    path('', views.OrderListView.as_view(), name='index'),
-    path('<int:pk>', views.OrderDetailView.as_view(), name='detail'),
-    path('<int:pk>/update', views.OrderUpdateView.as_view(), name='update'),
-    path('<int:pk>/cancel', views.cancel, name='cancel_order'),
+    path('', login_required(views.OrderListView.as_view()), name='index'),
+    path('<int:pk>', login_required(views.OrderDetailView.as_view()), name='detail'),
+    path('<int:pk>/update', login_required(views.OrderUpdateView.as_view()), name='update'),
+    path('<int:pk>/cancel', login_required(views.cancel), name='cancel_order'),
 ]

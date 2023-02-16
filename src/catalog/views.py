@@ -11,7 +11,11 @@ from .forms import UpdateForm, CreateForm
 class ProductListView(ListView):
   template_name = 'catalog/index.html'
   model = Product
-  # TODO Filter products that are either public or created by user
+  
+  def get_queryset(self, *args, **kwargs):
+    return super(ProductListView, self).get_queryset(
+        *args, **kwargs
+    ).exclude(belongs_to=not self.request.user or not None)
 
 class ProductCreateView(CreateView):
   template_name = 'catalog/create.html'
