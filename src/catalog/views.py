@@ -28,7 +28,7 @@ class ProductCreateView(CreateView):
     return context
 
   def post(self, *args, **kwargs):
-    print(self.request.POST)
+    print(self.request.FILES['cut_file'])
     form = self.request.POST
     product_size, created = ProductSize.objects.get_or_create(
       width=form['product_size_width'],
@@ -36,7 +36,7 @@ class ProductCreateView(CreateView):
     )
     product = Product(
       name=form['name'],
-      cut_file=form['cut_file'],
+      cut_file=self.request.FILES['cut_file'],
       belongs_to=self.request.user,
       product_size=product_size,
     )

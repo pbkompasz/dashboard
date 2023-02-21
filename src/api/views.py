@@ -48,7 +48,7 @@ class JSONDetailView(APIView):
     for s in STRUCT:
       data[s['variable_name']]: request.data.get(s['variable_name'])
 
-
+    u = UploadedFile.create("API")
 
     serializer = UploadFileSerializer(data=data)
     if serializer.is_valid():

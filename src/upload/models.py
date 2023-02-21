@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+import datetime
 
 from order.models import Status, Cart
 from payment.models import Invoice
@@ -109,9 +110,14 @@ class UploadedFile(models.Model):
     ("API", "api"),
   )
   upload_method = models.CharField(max_length=7, choices=UPLOAD_METHOD_CHOICES)
-  date_uploaded = models.DateField()
+  date_uploaded = models.DateField(default=datetime.date.today)
   file = models.FileField()
-  belongs_to = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
-  status = models.ForeignKey(Status, on_delete=models.CASCADE)
-  order = models.ForeignKey(Cart, on_delete=models.CASCADE)
-  payment = models.ForeignKey(Invoice, on_delete=models.CASCADE)
+  # belongs_to = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+  # status = models.ForeignKey(Status, on_delete=models.CASCADE)
+  order = models.ForeignKey(Cart, on_delete=models.CASCADE, null=True)
+  # payment = models.ForeignKey(Invoice, on_delete=models.CASCADE)
+
+  @classmethod
+  def create(cls, name):
+    print(name)
+    return cls(name=name)

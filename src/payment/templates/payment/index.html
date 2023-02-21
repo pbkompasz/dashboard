@@ -8,10 +8,11 @@
       <th>Date Approved</th>
       <th>Date Paid</th>
     </tr>
-    {% if invoices_payed %}
-      {% for invoice in invoices_payed %}
+    {% if invoice_list %}
+      {% for invoice in invoice_list %}
         <tr>
-          <td><a href="{% url 'download' invoice.id %}">{{ invoice.id }}</a></td>
+          <td>{{ invoice.id }}</td>
+          {% comment %} <td><a href="{% url 'media' invoice.id %}">{{ invoice.id }}</a></td> {% endcomment %}
           <td>{{ invoice.date_approved }}</td>
           <td>{{ invoice.date_paid }}</td>
         </tr>
@@ -45,9 +46,6 @@
           <td><a href="{% url 'update_payment_method' payment_method.id %}">Update</a></td>
           <td><a href="{% url 'remove_payment_method' payment_method.id %}">Remove</a></td>
         </tr>
-        <li>
-          {{ payment_method.type }}
-        </li>
       {% endfor %}
       </table>
     

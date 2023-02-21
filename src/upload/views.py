@@ -7,11 +7,14 @@ from django.core.mail import send_mail
 
 from .models import UploadedFile, STRUCT
 from payment.models import Invoice
-from order.models import Cart, CartItem, CartStatus
+from order.models import Cart, CartItem, CartStatus, ImageDesign, Status
 from catalog.models import Product
+from parse import *
 
 import csv
 import datetime
+
+from .models import UploadedFile
 
 # Create your views here.
 
@@ -24,6 +27,7 @@ class UploadIndexView(ListView):
 
   def get_context_data(self, *args, **kwargs):
     ctx = super().get_context_data(*args, **kwargs)
+    print(UploadedFile.objects.all())
     ctx['partners'] = User.objects.filter(
         is_superuser=False, is_staff=False)
     return ctx
@@ -40,9 +44,8 @@ class UploadIndexView(ListView):
 
     header_descriptor = self.process_csv_header(csv_file)
     print(header_descriptor)
-    # new_invoice = self.create_invoice() 
-    # cart = self.create_cart() 
-    # self.process_csv_body(csv_file, header_descriptor, partner, cart)
+    self.process_csv_body(csv_file, header_descriptor, partner)
+    self.save_document(self.request.FILES['file'])
     # return render(self.request, 'upload/index.html', {'new_invoice_id': new_invoice.id}, )
     return render(self.request, 'upload/index.html', )
 
@@ -77,7 +80,9 @@ class UploadIndexView(ListView):
     return header_descriptor
 
 
-  def process_csv_body(self, csv_file, header_descriptor, partner, cart):
+  def process_csv_body(self, csv_file, header_descriptor, partner):
+    print('Process body')
+
     new_carts = []
     sizing_chart = {
       'Small': 8,
@@ -99,44 +104,28 @@ class UploadIndexView(ListView):
     }
 
     reader = csv.reader(csv_file, delimiter=';')
-    next(reader)
+    t = next(reader)
+    if len(t) <= 1:
+      reader = csv.reader(csv_file, delimiter=',')
+      next(reader)
 
     for row in reader:
-      order_id = ''.join(filter(str.isdigit, row[int(header_descriptor['order_number'])]))
-      if order_id.startswith('#'):
-        order_id = order_id[1:]
-      cart, created = Cart.objects.get_or_create(
-        # ???
-        # store_id=self.store.id,
-        friendly_id=order_id, partner_id=partner)
-      cart.partner_id = partner
-      cart.client_first_name = row[header_descriptor['full_name']].split(' ')[0]
-      cart.client_last_name = ' '.join(row[header_descriptor['full_name']].split(' ')[1:])
-      cart.client_name = row[header_descriptor['full_name']]
-      cart.client_email = row[header_descriptor['email']]
-      cart.client_address = row[header_descriptor['address']]
-      cart.client_address_2 = row[header_descriptor['address_2']]
-      cart.client_phone = row[header_descriptor['phone']]
-      cart.client_city = row[header_descriptor['city']]
-      cart.client_state = row[header_descriptor['state']]
-      cart.client_zip = row[header_descriptor['zip']]
-      cart.client_country = row[header_descriptor['country']]
-      cart.save()
+      print(row)
+      
+      cart, created = self.create_cart(row, header_descriptor, partner)
 
       if created:
         # Create invoice for cart
-        InvoiceCart.objects.create(cart=cart, invoice=new_invoice)
-        # Assign cart status
-        cart.current_status = CartStatus.objects.create(
-          cart=cart, status_id=36)
-        cart.save()
+        self.create_invoice(cart)
         new_carts.append(cart)
       else:
         if cart in new_carts:
           pass
         else:
           messages.add_message(
-            self.request, messages.INFO, 'Cart #%s' % cart.friendly_id)
+            # TODO
+            # self.request, messages.INFO, 'Cart #%s' % cart.friendly_id)
+            self.request, messages.INFO, 'Cart #%s' % cart.id)
 
       # Will run twices if created
       if cart in new_carts or created:
@@ -153,25 +142,27 @@ class UploadIndexView(ListView):
             message='New Gossby Product - %s' % pd.id,
             from_email='info@mayamedia.io', recipient_list=['info@mayamedia.io'], fail_silently=True
           )
-        if header_descriptor['variant']:
-          pv, created = ProductVariant.objects.get_or_create(
-            product=pd, name=row[header_descriptor['variant']])
-          if created:
-            send_mail(
-              subject='New Gossby Product - Variant',
-              message='New Gossby Product - %s' % pv.id,
-              from_email='info@mayamedia.io', recipient_list=['info@mayamedia.io'], fail_silently=True
-            )
+        # if header_descriptor['variant']:
+          # Not required
+          # pv, created = ProductVariant.objects.get_or_create(
+          #   product=pd, name=row[header_descriptor['variant']])
+          # if created:
+          #   send_mail(
+          #     subject='New Gossby Product - Variant',
+          #     message='New Gossby Product - %s' % pv.id,
+          #     from_email='info@mayamedia.io', recipient_list=['info@mayamedia.io'], fail_silently=True
+          #   )
 
-        parent_po, created = Printable.objects.get_or_create(
-          title='_'.join(row[header_descriptor['product']].split('_')[:-1]))
-
-        if created:
-          send_mail(
-            subject='New Gossby Printable',
-            message='New Gossby Product - %s' % parent_po.id,
-            from_email='info@mayamedia.io', recipient_list=['info@mayamedia.io'], fail_silently=True
-          )
+        # Not required
+        # parent_po, created = Printable.objects.get_or_create(
+        #   title='_'.join(row[header_descriptor['product']].split('_')[:-1]))
+        # 
+        # if created:
+        #   send_mail(
+        #     subject='New Gossby Printable',
+        #     message='New Gossby Product - %s' % parent_po.id,
+        #     from_email='info@mayamedia.io', recipient_list=['info@mayamedia.io'], fail_silently=True
+        #   )
 
         # Not required
         # try:
@@ -191,8 +182,7 @@ class UploadIndexView(ListView):
         #     po = None
 
         try:
-          # ???
-          cart.date_closed_at = parse(row[header_descriptor['date_completed']])
+          cart.date_closed_at = parse(row[header_descriptor['date_completed']]) # type: ignore
         except:
           cart.date_closed_at = datetime.datetime.now()
 
@@ -204,6 +194,7 @@ class UploadIndexView(ListView):
           brula = None
 
         if pd.name == "2TShirtsPlusOnesieSET_1stChristmas":
+
           dad_ig = ImageDesign.objects.create(
             stored_data={"name": "2TShirtsPlusOnesieSET_1stChristmas_Adult", "color": "", "attributes":
               {"Base Image": row[header_descriptor['designx']],
@@ -217,10 +208,12 @@ class UploadIndexView(ListView):
           )
           cart.cartitem_set.create(
             product=pd,
-            printable_option_id=sizing_chart[row[header_descriptor['papa']]],
-            qty=row[header_descriptor['qty']],
+            # Not required
+            # printable_option_id=sizing_chart[row[header_descriptor['papa']]],
+            quantity=row[header_descriptor['qty']],
             design_1_source=dad_ig
           )
+
           mom_ig = ImageDesign.objects.create(
             stored_data={"name": "2TShirtsPlusOnesieSET_1stChristmas_Adult", "color": "", "attributes":
               {"Base Image": row[header_descriptor['designx']],
@@ -234,10 +227,12 @@ class UploadIndexView(ListView):
           )
           cart.cartitem_set.create(
             product=pd,
-            printable_option_id=sizing_chart[row[header_descriptor['mama']]],
-            qty=row[header_descriptor['qty']],
+            # Not required
+            # printable_option_id=sizing_chart[row[header_descriptor['mama']]],
+            quantity=row[header_descriptor['qty']],
             design_1_source=mom_ig
           )
+
           baby_ig = ImageDesign.objects.create(
             stored_data={"name": "2TShirtsPlusOnesieSET_1stChristmas_Adult", "color": "", "attributes":
               {"Base Image": row[header_descriptor['designx']],
@@ -255,37 +250,96 @@ class UploadIndexView(ListView):
             qty=row[header_descriptor['qty']],
             design_1_source=baby_ig,
           )
+
         elif pd.name == "GIFTBOX":
           cart.cartitem_set.create(
             product=pd,
-            qty=row[header_descriptor['qty']],
+            quantity=row[header_descriptor['qty']],
           )
+
         else:
           cart.cartitem_set.create(
             product=pd,
-            product_variant=pv,
-            printable_option=po,
-            qty=row[header_descriptor['qty']],
+            # Not required
+            # product_variant=pv,
+            # Not required
+            # printable_option=po,
+            quantity=row[header_descriptor['qty']],
             front_pdf=row[header_descriptor['frurla']] or '',
             back_pdf=brula
           )
 
-        if not cart.current_status.status_id == 36:
+        status = Status.objects.get(id=36)
+        if not cart.current_status.status.id == status.id:
           cart.current_status = CartStatus.objects.create(
-            cart=cart, status_id=36)
+            cart=cart, status=status)
           cart.save()
 
       if header_descriptor['brurla']:
-        ci = CartItem.objects.get(front_pdf=row[header_descriptor['frurla']])
-        ci.back_pdf = row[header_descriptor['brurla']]
-        ci.save()
+        try:
+          ci = CartItem.objects.get(front_pdf=row[header_descriptor['frurla']])
+          ci.back_pdf = row[header_descriptor['brurla']]
+          ci.save()
+        except:
+          pass
 
-  def create_invoice():
+  def create_invoice(self, cart):
+    print('Create invoice')
     new_invoice = Invoice.objects.create()
+    new_invoice.save()
+    cart.invoice = new_invoice
+    cart.save()
+    # Assign cart status
+    status = Status.objects.get(id=36)
+    cart.current_status = CartStatus.objects.create(
+      cart=cart, status=status)
+    cart.save()
     return new_invoice
 
   # Create order(s)
-  def create_cart():
-    new_cart = Cart.objects.create()
-    return new_cart
+  def create_cart(data, row, header_descriptor, partner):
+    print('Create cart')
+    order_id = ''.join(filter(str.isdigit, row[int(header_descriptor['order_number'])]))
+    if order_id.startswith('#'):
+      order_id = order_id[1:]
 
+    cart, created = Cart.objects.get_or_create(
+        # ???
+        # store_id=self.store.id,
+        # TODO
+        # friendly_id=order_id, partner_id=partner)
+        order_number=order_id,
+        order_number_internal=order_id,
+        # TODO
+        # partner_id=partner)
+    )
+    cart.partner_id = partner
+    cart.client_first_name = row[header_descriptor['full_name']].split(' ')[0]
+    cart.client_last_name = ' '.join(row[header_descriptor['full_name']].split(' ')[1:])
+    cart.client_name = row[header_descriptor['full_name']]
+    cart.client_email = row[header_descriptor['email']]
+    cart.client_address = row[header_descriptor['address']]
+    cart.client_address_2 = row[header_descriptor['address_2']]
+    cart.client_phone = row[header_descriptor['phone']]
+    cart.client_city = row[header_descriptor['city']]
+    cart.client_state = row[header_descriptor['state']]
+    cart.client_zip = row[header_descriptor['zip']]
+    cart.client_country = row[header_descriptor['country']]
+    cart.save()
+    return cart, created
+
+  def create_cart_item(self, ):
+    # TODO Add cart_item.cost to cart.total_cost
+    pass
+
+  def add_item_to_cart(self, cart, cart_item):
+
+    pass
+
+  def save_document(self, document):
+    uf = UploadedFile(upload_method='MANUAL',
+      file=document,
+      # order=order_number
+    )
+    uf.save()
+    return uf

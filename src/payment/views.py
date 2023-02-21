@@ -13,7 +13,8 @@ class PaymentListView(ListView):
   def get_context_data(self, *args, **kwargs):
     context = super(PaymentListView, self).get_context_data(*args, **kwargs)
     context['invoices_paid'] = Invoice.objects.exclude(
-      date_paid = None )
+      date_paid = None
+        )
     context['payment_methods'] = UserPaymentMethod.objects.all()
     context['form'] = AddPaymentForm()
     return context

@@ -15,20 +15,21 @@
         <th>Date uploaded</th>
         <th>Upload method</th>
         <th>File</th>
-        <th>Status</th>
-        <th>Order</th>
-        <th>Payment</th>
+        {% comment %} <th>Status</th> {% endcomment %}
+        {% comment %} <th>Order</th>
+        <th>Payment</th> {% endcomment %}
       </tr>
+      {{ files }}
       {% if files %}
         {% for file in files %}
           <tr>
             <td>{{ forloop.counter }}</td>
             <td>{{ file.date_uploaded }}</td>
             <td>{{ file.upload_method }}</td>
-            <td><a href="">{{ file.file.name }}</a></td>
-            <td>{{ file.status.name }}</td>
-            <td><a href="{% url 'order' file.order.id %}">{{ file.order.id }}</a></td>
-            <td><a href="{% url 'payment' file.payment.id %}">{{ file.payment.id }}</a></td>
+            <td><a href="/media/{{file.file.name}}">{{ file.file.name }}</a></td>
+            {% comment %} <td>{{ file.status }}</td> {% endcomment %}
+            {% comment %} <td><a href="{% url 'order' file.order.id %}">{{ file.order.id }}</a></td> {% endcomment %}
+            {% comment %} <td><a href="{% url 'payment' file.payment.id %}">{{ file.payment.id }}</a></td> {% endcomment %}
           </tr>
         {% endfor %}
       {% else %}

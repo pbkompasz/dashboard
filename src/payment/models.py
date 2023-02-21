@@ -14,5 +14,5 @@ class UserPaymentMethod(models.Model):
 
 class Invoice(models.Model):
   file = models.FileField(upload_to='documents/')
-  date_approved = models.DateField()
-  date_paid = models.DateField()
+  date_approved = models.DateField(null=True)
+  date_paid = models.DateField(null=True)
