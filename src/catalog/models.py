@@ -8,11 +8,11 @@ class ProductSize(models.Model):
   height = models.IntegerField()
 
 class Product(models.Model):
-  name = models.CharField(max_length=25)
+  name = models.CharField(max_length=50)
   type = models.CharField(max_length=10, default='global')
   cut_file = models.FileField(upload_to='documents/')
   belongs_to = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
-  product_size = models.ForeignKey(ProductSize, on_delete=models.CASCADE)
+  product_size = models.ForeignKey(ProductSize, on_delete=models.CASCADE, null=True)
 
   def is_private(self):
     return self.belongs_to is not None

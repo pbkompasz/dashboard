@@ -2,12 +2,12 @@
 
 {% block content %}
   {% if cart %}
-
   <ul>
+    {{ cart.cartitems }}
     <li>
       <div>Items</div>
       <ol>
-        {% for item in cart.items %}  
+        {% for item in cart.cartitem_list %}  
           <li>
             {{ item.id }}
           </li>

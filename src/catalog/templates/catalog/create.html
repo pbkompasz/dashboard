@@ -2,7 +2,7 @@
 
 {% block content %}
 <h1>Create private product</h1>
-<form action="{% url 'create' %}" method="post">
+<form action="{% url 'catalog:create' %}" method="post" enctype='multipart/form-data'>
   {% csrf_token %}
 
   {{ form }}

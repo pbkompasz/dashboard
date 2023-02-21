@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import redirect
 from django.http import HttpResponse
 from django.views.generic import DetailView, ListView, CreateView, UpdateView
 from django.views import View
@@ -28,7 +28,7 @@ class ProductCreateView(CreateView):
     return context
 
   def post(self, *args, **kwargs):
-    print(self.request.FILES['cut_file'])
+    print(self.request.FILES)
     form = self.request.POST
     product_size, created = ProductSize.objects.get_or_create(
       width=form['product_size_width'],
@@ -41,7 +41,7 @@ class ProductCreateView(CreateView):
       product_size=product_size,
     )
     product.save()
-    return render(self.request, 'catalog/index.html')
+    return redirect('catalog:index')
 
 class ProductUpdateView(UpdateView):
   template_name = 'catalog/update.html'

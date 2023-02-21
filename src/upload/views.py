@@ -1,36 +1,35 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import ListView
 from django.contrib.auth.models import User
 from django.utils.datastructures import MultiValueDictKeyError
 from django.contrib import messages
 from django.core.mail import send_mail
 
-from .models import UploadedFile, STRUCT
+from .models import FileUpload, Upload, STRUCT
 from payment.models import Invoice
 from order.models import Cart, CartItem, CartStatus, ImageDesign, Status
 from catalog.models import Product
-from parse import *
 
 import csv
 import datetime
-
-from .models import UploadedFile
-
-# Create your views here.
+from parse import * # type: ignore
 
 
 
 class UploadIndexView(ListView):
-  model = UploadedFile
+  model = Upload
   template_name = 'upload/index.html'
   context_object_name = 'files'
 
   def get_context_data(self, *args, **kwargs):
     ctx = super().get_context_data(*args, **kwargs)
-    print(UploadedFile.objects.all())
     ctx['partners'] = User.objects.filter(
-        is_superuser=False, is_staff=False)
+      is_superuser=False, is_staff=False)
+    # ctx['files'] = UploadedFile.objects.filter(
+    #   upload_method='MANUAL',
+    # )
     return ctx
+
 
   def post(self, *args, **kwargs):
     partner = self.request.POST.get('partner')
@@ -46,8 +45,8 @@ class UploadIndexView(ListView):
     print(header_descriptor)
     self.process_csv_body(csv_file, header_descriptor, partner)
     self.save_document(self.request.FILES['file'])
-    # return render(self.request, 'upload/index.html', {'new_invoice_id': new_invoice.id}, )
-    return render(self.request, 'upload/index.html', )
+    return redirect('index')
+    
 
   def process_csv_header(self, csv_file):
     reader = csv.reader(csv_file, delimiter=';')
@@ -103,36 +102,40 @@ class UploadIndexView(ListView):
       '24 Meses': 62
     }
 
+    # Init reader
     reader = csv.reader(csv_file, delimiter=';')
     t = next(reader)
     if len(t) <= 1:
       reader = csv.reader(csv_file, delimiter=',')
       next(reader)
 
+    invoice = self.create_invoice()
+
+    # For every row create a cart
+    # The cart has the same 'payment'
     for row in reader:
-      print(row)
       
       cart, created = self.create_cart(row, header_descriptor, partner)
 
       if created:
-        # Create invoice for cart
-        self.create_invoice(cart)
+        # Link cart to invoice
+        cart.invoice = invoice
         new_carts.append(cart)
       else:
-        if cart in new_carts:
-          pass
-        else:
+        if cart not in new_carts:
           messages.add_message(
             # TODO
             # self.request, messages.INFO, 'Cart #%s' % cart.friendly_id)
             self.request, messages.INFO, 'Cart #%s' % cart.id)
 
-      # Will run twices if created
       if cart in new_carts or created:
-        cart.current_status = CartStatus.objects.create(
-          cart=cart, status_id=36)
+        print('here')
+        # cart.current_status = CartStatus.objects.create(
+        #   cart=cart, status_id=36)
         pd, created = Product.objects.get_or_create(
-          store_id=10, name=row[header_descriptor['product']])
+          # store_id=10,
+          name=row[header_descriptor['product']])
+        print(pd, created)
         if created:
           messages.add_message(
             self.request, messages.INFO, 'New Product #%s' % pd.id)
@@ -206,6 +209,7 @@ class UploadIndexView(ListView):
               },
             image_creator_id=4664
           )
+
           cart.cartitem_set.create(
             product=pd,
             # Not required
@@ -269,11 +273,11 @@ class UploadIndexView(ListView):
             back_pdf=brula
           )
 
-        status = Status.objects.get(id=36)
-        if not cart.current_status.status.id == status.id:
-          cart.current_status = CartStatus.objects.create(
-            cart=cart, status=status)
-          cart.save()
+        # status = Status.objects.get(id=36)
+        # if not cart.current_status.status.id == status.id:
+        #   cart.current_status = CartStatus.objects.create(
+        #     cart=cart, status=status)
+        #   cart.save()
 
       if header_descriptor['brurla']:
         try:
@@ -283,17 +287,10 @@ class UploadIndexView(ListView):
         except:
           pass
 
-  def create_invoice(self, cart):
+  def create_invoice(self):
     print('Create invoice')
     new_invoice = Invoice.objects.create()
     new_invoice.save()
-    cart.invoice = new_invoice
-    cart.save()
-    # Assign cart status
-    status = Status.objects.get(id=36)
-    cart.current_status = CartStatus.objects.create(
-      cart=cart, status=status)
-    cart.save()
     return new_invoice
 
   # Create order(s)
@@ -326,6 +323,23 @@ class UploadIndexView(ListView):
     cart.client_zip = row[header_descriptor['zip']]
     cart.client_country = row[header_descriptor['country']]
     cart.save()
+
+    if created or hasattr(cart, 'cartstatus '):
+      status, _ = Status.objects.get_or_create(
+        name='Regist',
+        color='grey',
+      )
+      status.save()
+
+      cart_status, _ = CartStatus.objects.get_or_create(
+        cart=cart,
+        status=status,
+      )
+      print('here')
+      cart_status.save()
+
+      # cart.cartstatus = cart_status
+      # cart.save()
     return cart, created
 
   def create_cart_item(self, ):
@@ -337,9 +351,13 @@ class UploadIndexView(ListView):
     pass
 
   def save_document(self, document):
-    uf = UploadedFile(upload_method='MANUAL',
-      file=document,
-      # order=order_number
+    fu = FileUpload(file=document)
+    fu.save()
+
+    upload = Upload(
+      upload_method='MANUAL',
+      file_upload = fu,
     )
-    uf.save()
-    return uf
+    upload.save()
+
+    return upload

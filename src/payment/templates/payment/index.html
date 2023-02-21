@@ -7,6 +7,7 @@
       <th>Id</th>
       <th>Date Approved</th>
       <th>Date Paid</th>
+      <th>Payment</th>
     </tr>
     {% if invoice_list %}
       {% for invoice in invoice_list %}
@@ -15,6 +16,7 @@
           {% comment %} <td><a href="{% url 'media' invoice.id %}">{{ invoice.id }}</a></td> {% endcomment %}
           <td>{{ invoice.date_approved }}</td>
           <td>{{ invoice.date_paid }}</td>
+          <td>{{ invoice.payment }}</td>
         </tr>
       {% endfor %}
     {% else %}
