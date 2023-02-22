@@ -4,15 +4,15 @@
 }
 
 #sidebar {
-  flex: 1;
   border-right: solid;
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 1rem;
+  gap: 0.5rem;
 }
 
 #content {
-  flex: 6;
   padding: 2rem;
 }
 
@@ -27,6 +27,8 @@ table {
 }
 table td, table th {
   border: 1px solid black;
+  text-align: center;
+  min-width: 4rem;
 }
 table tr:first-child th {
   border-top: 0;
@@ -52,4 +54,12 @@ table tr th:last-child {
 .products > div {
   border: solid;
   padding: 1rem;
+}
+
+.invoices {
+  padding: 0 0 2rem 0;
+}
+
+.payment-form > * {
+  margin: 0 0 0.5rem 0;
 }

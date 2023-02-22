@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.views.generic import DetailView, ListView
 
 from .models import Cart, CartItem
+from .forms import UpdateCartForm
 
 # Create your views here.
 
@@ -37,6 +38,12 @@ def cancel(request):
 class OrderUpdateView(DetailView):
   template_name = 'order/update.html'  
   model = Cart
+
+  def get_context_data(self, **kwargs):
+    context = super().get_context_data(**kwargs)
+    context['form'] = UpdateCartForm(instance=self.object)
+    return context
+
 
   def post(self, *args, **kwargs):
     # if (not_in_production(1)):

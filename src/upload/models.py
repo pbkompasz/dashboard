@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.core.mail import send_mail
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 
 from order.models import Status, Cart, Product, CartItem, ImageDesign, CartStatus
 from payment.models import Invoice
@@ -470,3 +472,20 @@ class Upload(models.Model):
   order = models.ForeignKey(Cart, on_delete=models.CASCADE, null=True)
   file_upload = models.OneToOneField(FileUpload, on_delete=models.CASCADE, null=True, blank=True)
   api_upload = models.OneToOneField(ApiUpload, on_delete=models.CASCADE, null=True, blank=True)
+
+@receiver(post_save, sender=Upload)
+def my_handler(sender, instance, **kwargs):
+  status, _ = Status.objects.get_or_create(
+    name='Uploaded',
+  )
+  cart_status, _ = UploadStatus.objects.get_or_create(
+    status=status,
+    upload=instance,
+  )
+
+class UploadStatus(models.Model):
+  status = models.ForeignKey(Status, on_delete=models.CASCADE)
+  upload = models.OneToOneField(
+    Upload,
+    on_delete=models.CASCADE,
+  )

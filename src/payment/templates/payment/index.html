@@ -1,34 +1,38 @@
 {% extends 'payment/base.html' %}
+{% load bootstrap5 %}
 
 {% block content %}
-  <h2>Paid invoices</h2>
-  <table>
-    <tr>
-      <th>Id</th>
-      <th>Date Approved</th>
-      <th>Date Paid</th>
-      <th>Payment</th>
-    </tr>
-    {% if invoice_list %}
-      {% for invoice in invoice_list %}
-        <tr>
-          <td>{{ invoice.id }}</td>
-          {% comment %} <td><a href="{% url 'media' invoice.id %}">{{ invoice.id }}</a></td> {% endcomment %}
-          <td>{{ invoice.date_approved }}</td>
-          <td>{{ invoice.date_paid }}</td>
-          <td>{{ invoice.payment }}</td>
-        </tr>
-      {% endfor %}
-    {% else %}
+  <div class='invoices'>
+    <h2>Paid invoices</h2>
+    <table>
       <tr>
-        <td colspan="1000" style="text-align: center;">
-          No paid invoices
-        </td>
+        <th>Id</th>
+        <th>Date Approved</th>
+        <th>Date Paid</th>
+        <th>Payment</th>
       </tr>
-    {% endif %}
-  </table>
+      {% if invoice_list %}
+        {% for invoice in invoice_list %}
+          <tr>
+            <td>{{ invoice.id }}</td>
+            {% comment %} <td><a href="{% url 'media' invoice.id %}">{{ invoice.id }}</a></td> {% endcomment %}
+            <td>{{ invoice.date_approved }}</td>
+            <td>{{ invoice.date_paid }}</td>
+            <td>{{ invoice.payment }}</td>
+          </tr>
+        {% endfor %}
+      {% else %}
+        <tr>
+          <td colspan="1000" style="text-align: center;">
+            No paid invoices
+          </td>
+        </tr>
+      {% endif %}
+    </table>
+  </div>
+  
 
-<h2>Added Payment Methods</h2>
+  <h2>Added Payment Methods</h2>
   {% if not payment_methods %}
     <div class="warn">
       No payment methods
@@ -52,9 +56,10 @@
       </table>
     
   {% endif %}
-  <form action="/your-name/" method="post">
+  <form action="/your-name/" method="post" class='payment-form'>
     {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Submit">
+    {% comment %} {{ form }} {% endcomment %}
+    {% bootstrap_form form %}
+    {% bootstrap_button content='Submit' button_type="submit" %}
   </form>
 {% endblock content %}

@@ -28,33 +28,26 @@
     name: Approved
     color: green
 
-
 - model: order.status
   pk: 6
-  fields:
-    name: Uploaded
-    color: orange
-
-- model: order.status
-  pk: 7
   fields:
     name: Initialised
     color: white
 
 - model: order.status
-  pk: 8
+  pk: 7
   fields:
     name: Finished
     color: pink
 
 - model: order.status
-  pk: 9
+  pk: 8
   fields:
     name: Failed
     color: red
 
 - model: order.status
-  pk: 10
+  pk: 9
   fields:
     name: Cancelled
     color: black

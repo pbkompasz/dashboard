@@ -12,7 +12,7 @@ from .models import FileUpload, Upload, STRUCT
 class UploadIndexView(ListView):
   model = Upload
   template_name = 'upload/index.html'
-  context_object_name = 'files'
+  context_object_name = 'uploads'
 
   def get_context_data(self, *args, **kwargs):
     ctx = super().get_context_data(*args, **kwargs)

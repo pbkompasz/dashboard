@@ -1,11 +1,11 @@
 {% extends 'catalog/base.html' %}
+{% load bootstrap5 %}
 
 {% block content %}
 <h1>Create private product</h1>
 <form action="{% url 'catalog:create' %}" method="post" enctype='multipart/form-data'>
   {% csrf_token %}
-
-  {{ form }}
-  <input type="submit" value="Create">
+  {% bootstrap_form form %}
+  {% bootstrap_button content='Create' button_type='submit' %}
 </form>
 {% endblock content %}
