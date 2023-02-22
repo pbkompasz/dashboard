@@ -1,0 +1,60 @@
+- model: order.status
+  pk: 1
+  fields:
+    name: Production
+    color: grey
+
+- model: order.status
+  pk: 2
+  fields:
+    name: Shipped
+    color: blue
+
+- model: order.status
+  pk: 3
+  fields:
+    name: Paid
+    color: yellow
+
+- model: order.status
+  pk: 4
+  fields:
+    name: Uploaded
+    color: orange
+
+- model: order.status
+  pk: 5
+  fields:
+    name: Approved
+    color: green
+
+
+- model: order.status
+  pk: 6
+  fields:
+    name: Uploaded
+    color: orange
+
+- model: order.status
+  pk: 7
+  fields:
+    name: Initialised
+    color: white
+
+- model: order.status
+  pk: 8
+  fields:
+    name: Finished
+    color: pink
+
+- model: order.status
+  pk: 9
+  fields:
+    name: Failed
+    color: red
+
+- model: order.status
+  pk: 10
+  fields:
+    name: Cancelled
+    color: black
