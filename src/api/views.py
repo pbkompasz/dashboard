@@ -13,9 +13,6 @@ from .serializers import UploadFileSerializer
 from order.models import Cart
 from payment.models import Invoice
 
-import datetime
-import json
-
 # Create your views here.
 
 class JSONDetailView(APIView):
@@ -59,7 +56,7 @@ class JSONDetailView(APIView):
  
   
   # Create UploadFile model
-  def create_or_update_orders(self, data, partner):
+  def create_or_update_cart(self, data, partner):
     new_carts = []
     for d in data:
       # TODO What is store and partner
@@ -80,23 +77,17 @@ class JSONDetailView(APIView):
     
     return new_carts
 
-  def get_or_create_invoice(self, orders):
+  def get_or_create_invoice(self, carts):
     invoice = None
     return invoice
-    for order in orders:
-      invoice = Invoice.objects.get(
-        order=order,
-      )
-      break
-
-    if invoice is None:
-      # Create invoice
-      invoice = Invoice()
-      invoice.save()
-
-    for order in orders:
-      order.invoice = invoice
-      order.save()
+    for cart in carts:
+      try:
+        cart['invoice']
+      except:
+        if invoice == None:
+          invoice = create_invoice()
+        cart.invoice = invoice
+        cart.save()
 
     return invoice 
   
@@ -109,29 +100,30 @@ class JSONDetailView(APIView):
   def post(self, request, *args, **kwargs):
     partner = request.user
     data = {}
+    print('here')
     for s in STRUCT:
       data[s['variable_name']] = request.data.get(s['variable_name']) if not None else s['default']
-    if not 'orders' in request.data:
+    if not 'carts' in request.data:
       context = {
-        'status': '400', 'reason': 'JSON missing \'orders\' attribute', 
+        'status': '400', 'reason': 'JSON missing \'carts\' attribute', 
       }
       response = Response(context)
       response.status_code = 400
       return response
 
-    orders = self.create_or_update_orders(request.data['orders'], partner)
-    invoice = self.get_or_create_invoice(orders)
+    carts = self.create_or_update_carts(request.data['carts'], partner)
+    invoice = self.get_or_create_invoice(carts)
 
     context = {
       'ok': 'true',
-      'orders': orders,
+      'carts': carts,
       'invoice': invoice,
     }
     response = Response(context)
     return response
 
 {
-  "orders": [
+  "carts": [
     {
       "Code":  "123",
       "Product Type": "2TShirtsPlusOnesieSET_1stChristmas",
@@ -165,7 +157,7 @@ class JSONDetailView(APIView):
 }
 
 {
-  "orders": [
+  "carts": [
     {
       "Code":  "123",
       "Product Type": "2TShirtsPlusOnesieSET_1stChristmas",

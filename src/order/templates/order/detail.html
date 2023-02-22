@@ -5,18 +5,18 @@
   <ul>
     {{ cart.cartitems }}
     <li>
-      <div>Items</div>
+      <div>Items({{cartitems.count}})</div>
       <ol>
-        {% for item in cart.cartitem_list %}  
+        {% for item in cartitems %}  
           <li>
             {{ item.id }}
+            {{ item.product.name }}
+            {{ item.product.type }}
+            {% comment %} TODO Cost cannot be None {% endcomment %}
+            {{ item.cost }}
           </li>
         {% endfor %}
       </ol>
-    </li>
-    <li>
-      <div>From</div>
-      <div>{{ cart.store }}</div>
     </li>
     <li>
       <div>To</div>
@@ -24,10 +24,14 @@
     </li>
     <li>
       <div>Status:</div>
-      <div>{{ cart.current_status.status.name }}</div>
+      <div>{{ cart.cartstatus.status.name }}</div>
+    </li>
+    <li>
+      <div>Cost:</div>
+      <div>{{ cart.total_cost }}</div>
     </li>
   </ul>
-  <td><a href="{% url 'update' cart.id %}">Update</a></td>
+  <td><a href="{% url 'update' cart.order_number_internal %}">Update</a></td>
   {% else %}
     <p>No such order.</p>
   {% endif %}

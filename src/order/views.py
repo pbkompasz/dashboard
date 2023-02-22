@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import DetailView, ListView
 
-from .models import Cart
+from .models import Cart, CartItem
 
 # Create your views here.
 
@@ -13,10 +13,16 @@ class OrderListView(ListView):
   #   return []
 
 
+from pprint import pprint
 
 class OrderDetailView(DetailView):
   template_name = 'order/detail.html'
   model = Cart
+
+  def get_context_data(self, *args, **kwargs):
+    ctx = super().get_context_data(*args, **kwargs)
+    ctx['cartitems'] = CartItem.objects.all().filter(cart=self.object)
+    return ctx
 
 
 # TODO Check if Order is in production

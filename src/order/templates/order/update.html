@@ -1,15 +1,15 @@
 {% extends 'order/base.html' %}
 
 {% block content %}
-  <h2>#{{ cart.id }}</h2>
+  <h2>#{{ cart.order_number }}</h2>
   {% if not cart.current_status.status == 'production' %}
-    <form action="{% url 'cancel_order' cart.id %}" method="post">
+    <form action="{% url 'cancel_order' cart.order_number_internal %}" method="post">
       {% csrf_token %}
       <input type="submit" value="Cancel Order">
     </form>
   {% endif %}
   {% if not order.has_shipped %}
-    <form action="{% url 'update' cart.id %}" method="post">
+    <form action="{% url 'update' cart.order_number_internal %}" method="post">
       {% csrf_token %}
       <fieldset>
         <legend><h1>Change address</h1></legend>
