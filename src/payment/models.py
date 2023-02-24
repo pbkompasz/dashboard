@@ -9,7 +9,8 @@ class UserPaymentMethod(models.Model):
     ("PAYPAL", "PayPal"),
   )
   name = models.CharField(max_length=7, choices=METHODS)
-  token = models.CharField(max_length=20)
+  token = models.CharField(max_length=50, null=True)
+  customer = models.JSONField(null=True)
   belongs_to = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
 
 class Invoice(models.Model):

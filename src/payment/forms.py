@@ -6,7 +6,6 @@ METHODS = (
 )
   
 class AddPaymentForm(forms.Form):
-  # TODO Make it dropdown
   name = forms.ChoiceField(
     required=False,
     choices=METHODS,

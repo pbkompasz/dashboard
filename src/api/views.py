@@ -1,14 +1,13 @@
-from django.shortcuts import render
 from django.views.generic.detail import BaseDetailView
-from django.views import View
-from django.http import HttpResponse
+from django.core import serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import permissions
 
 from .mixins import JSONResponseMixin
-from upload.models import ApiUpload, Upload, STRUCT
+from upload.models import Upload, STRUCT
+from .models import ApiUpload
 from .serializers import UploadFileSerializer
 from order.models import Cart
 from payment.models import Invoice
@@ -28,21 +27,17 @@ class JSONDetailView(APIView):
   def create_file(self, file_name, data):
     pass
 
-  def save_upload(file, data):
+  def save_upload(self):
+    data =  self.request.data
+    # raw = serializers.serialize("json", data)
+    # print(data, raw)
     api_upload = ApiUpload(raw=data)
-    upload = Upload(
-      upload_method='API',
-      # file=file,
-      # belongs_to = self.request.user,
-      # order=order,
-      # payment=payment,
-      # status=status,
-    )
-    return upload
+    api_upload.save() 
+    return api_upload
   
   def get_value(self, row, attribute):
     # s = next((item for i, item in enumerate(STRUCT) if item['variable_name'] == attribute), None)    
-    print(attribute)
+    # print(attribute)
     for t in STRUCT:
       if t['variable_name'] == attribute:
         s = t
@@ -58,10 +53,14 @@ class JSONDetailView(APIView):
   # Create UploadFile model
   def create_or_update_cart(self, data, partner):
     new_carts = []
+    messages = []
     for d in data:
-      # TODO What is store and partner
-      cart = Cart.objects.get_or_create(
-        store=partner,
+      valid, message = self.is_row_valid(d)
+      if not valid:
+        print(message)
+        messages.append({'message': message})
+      cart, _ = Cart.objects.get_or_create(
+        # store=partner,
         order_number=self.get_value(d, 'order_number'),
         client_address=self.get_value(d, 'client_address'),
         client_address_2=self.get_value(d, 'client_address_2'),
@@ -75,10 +74,10 @@ class JSONDetailView(APIView):
       print(cart)
       new_carts.append(cart)
     
-    return new_carts
+    return new_carts, messages
 
   def get_or_create_invoice(self, carts):
-    invoice = None
+    invoice = {}
     return invoice
     for cart in carts:
       try:
@@ -97,64 +96,51 @@ class JSONDetailView(APIView):
   def create_design(self, data):
     pass
 
+  def is_json_valid(self, data):
+    if not 'carts' in self.request.data:
+      return False, 'JSON missing \'carts\' attribute'
+    return True, None
+
+  def is_row_valid(self, row):
+    for s in STRUCT:
+      if 'required' in s:
+        ok = False
+        for name in s['column_names']:
+          if name in row:
+            ok = True
+            break
+        if not ok:
+          return False, 'Missing required field: ' + s['variable_name']
+    return True, None
+
   def post(self, request, *args, **kwargs):
     partner = request.user
     data = {}
     print('here')
-    for s in STRUCT:
-      data[s['variable_name']] = request.data.get(s['variable_name']) if not None else s['default']
-    if not 'carts' in request.data:
+    valid, message = self.is_json_valid(data)
+    print(data)
+    if not valid:
       context = {
-        'status': '400', 'reason': 'JSON missing \'carts\' attribute', 
+        'status': '400', 'message': message, 
       }
       response = Response(context)
       response.status_code = 400
       return response
+    
+    self.save_upload()
 
-    carts = self.create_or_update_carts(request.data['carts'], partner)
+    carts, messages = self.create_or_update_cart(request.data['carts'], partner)
+    print(carts, messages)
     invoice = self.get_or_create_invoice(carts)
 
     context = {
       'ok': 'true',
-      'carts': carts,
-      'invoice': invoice,
+      'carts': serializers.serialize("json", carts),
+      'invoice': serializers.serialize("json", invoice),
+      'messages': messages,
     }
-    response = Response(context)
+    response = Response(data=context)
     return response
-
-{
-  "carts": [
-    {
-      "Code":  "123",
-      "Product Type": "2TShirtsPlusOnesieSET_1stChristmas",
-      "Main design file name (.png)": "main",
-      "Dad title image file (.png)": "main_papa",
-      "Mom title image file (.png)": "main_mama",
-      "Baby’s name (Text)": "main_baby",
-      "Dad Tshirt Size": "l",
-      "Mom Tshirt Size": "m",
-      "Baby’s OneSie Size": "s",
-      # Required only for GIFTBOX
-      # "Size": "",
-      "Shipping Fullname": "John Doe",
-      "Phone": "+1 202-918-2132",
-      # Optional
-      # "order date": "",
-      "Email": "me@asd.com",
-      "Address1": "291 Reeves Street",
-      # Optional
-      # "Address2": "",
-      "City": "Green Bay",
-      "Province": "Wisconsin",
-      "Zip": "54301",
-      "Country Code": "USA",
-      # Not required for 2TShirtsPlusOnesieSET_1stChristmas
-      # "UnFulfill Quantity": "",
-      # "Printer Design Url Back": "",
-      # "Printer Design Url Front": ""
-    }
-  ]
-}
 
 {
   "carts": [

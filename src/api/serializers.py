@@ -5,9 +5,9 @@ from upload.models import Upload
 class UploadFileSerializer(serializers.ModelSerializer):
   class Meta:
     model = Upload
-    fields = ["date_uploaded", "cart", 'api_upload']
+    fields = ["date_uploaded", 'api_upload', 'file_upload']
 
-class CreateCartSerializer(serializers.ModelSerializer):
+class CreateOrderSerializer(serializers.ModelSerializer):
   class Meta:
     model = Upload
-    fields = ["date_uploaded", "cart", 'api_upload']
+    fields = ["date_uploaded", "order", 'api_upload']

@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.utils.datastructures import MultiValueDictKeyError
 from django.http import HttpResponse
 from django.urls import reverse
+from django.contrib import messages
 
 from .models import FileUpload, Upload, STRUCT
 
@@ -31,7 +32,7 @@ class UploadIndexView(ListView):
       csv_file = self.request.FILES["file"].file.read().decode(
           'utf-8-sig').splitlines()
     except MultiValueDictKeyError:
-      print('TODO')
+      messages.error(self.request, 'Upload error')
       return render(self.request, 'upload/index.html')
 
     doc = FileUpload(file=self.request.FILES['file'])

@@ -1,14 +1,15 @@
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
 
+from order.models import Cart
+from catalog.models import Product
+
 import json
+from pprint import pprint
 
 # Create your tests here.
 
 class ApiUploadTests(TestCase):
-
-  def login(self, c):
-    c.post('/login/', { 'username': 'admin', 'password': 'admin'})
 
   def test_api_general(self):
     """
@@ -22,41 +23,48 @@ class ApiUploadTests(TestCase):
     c = Client()
     logged_in = c.login(username='testuser', password='12345')
 
-    resp = c.generic('POST', '/api/orders', json.dumps({
-      "orders": [
-        {
-        "Code":  "123",
-        "Product Type": "2TShirtsPlusOnesieSET_1stChristmas",
-        "Main design file name (.png)": "main",
-        "Dad title image file (.png)": "main_papa",
-        "Mom title image file (.png)": "main_mama",
-        "Baby’s name (Text)": "main_baby",
-        "Dad Tshirt Size": "l",
-        "Mom Tshirt Size": "m",
-        "Baby’s OneSie Size": "s",
-        "Shipping Fullname": "John Doe",
-        "Phone": "+1 202-918-2132",
-        "Email": "me@asd.com",
-        "Address1": "291 Reeves Street",
-        "City": "Green Bay",
-        "Province": "Wisconsin",
-        "Zip": "54301",
-        "Country Code": "USA"
-        }
-      ]}))
-    print(resp)
-    print(resp.content)
-    # self.assertEqual(resp.status_code, 400)
+    resp = c.post('/api/orders',
+      json.dumps({
+        "carts": [
+          {
+            "Code":  "test_api_1",
+            "Product Type": "2TShirtsPlusOnesieSET_1stChristmas",
+            "Main design file name (.png)": "main",
+            "Dad title image file (.png)": "main_papa",
+            "Mom title image file (.png)": "main_mama",
+            "Baby’s name (Text)": "main_baby",
+            "Dad Tshirt Size": "l",
+            "Mom Tshirt Size": "m",
+            "Baby’s OneSie Size": "s",
+            "Shipping Fullname": "John Doe",
+            "Phone": "+1 202-918-2132",
+            "Email": "me@asd.com",
+            "Address1": "291 Reeves Street",
+            "City": "Green Bay",
+            "Province": "Wisconsin",
+            "Zip": "54301",
+            "Country Code": "USA"
+          }
+        ]
+      }),
+      content_type="application/json", )
+    self.assertEqual(resp.status_code, 200)
     
   def test_known_product_2tshirtsplusone(self):
     """
     Send an empty file
     Should return 400
     """
-    {
+    user = User.objects.create(username='testuser')
+    user.set_password('12345')
+    user.save()
+
+    c = Client()
+    logged_in = c.login(username='testuser', password='12345')
+    data = {
       "carts": [
         {
-          "Code":  "123",
+          "Code":  "test_api_2",
           "Product Type": "2TShirtsPlusOnesieSET_1stChristmas",
           "Main design file name (.png)": "main",
           "Dad title image file (.png)": "main_papa",
@@ -65,28 +73,41 @@ class ApiUploadTests(TestCase):
           "Dad Tshirt Size": "l",
           "Mom Tshirt Size": "m",
           "Baby’s OneSie Size": "s",
-          # Required only for GIFTBOX
-          # "Size": "",
           "Shipping Fullname": "John Doe",
           "Phone": "+1 202-918-2132",
-          # Optional
-          # "order date": "",
           "Email": "me@asd.com",
           "Address1": "291 Reeves Street",
-          # Optional
-          # "Address2": "",
           "City": "Green Bay",
           "Province": "Wisconsin",
           "Zip": "54301",
           "Country Code": "USA",
-          # Not required for 2TShirtsPlusOnesieSET_1stChristmas
-          # "UnFulfill Quantity": "",
           # "Printer Design Url Back": "",
           # "Printer Design Url Front": ""
         }
       ]
     }
-    pass
+    resp = c.post('/api/orders',
+      json.dumps(data),
+      content_type="application/json", )
+    self.assertEqual(resp.status_code, 200)
+    print(resp.data)
+
+    try:
+      Cart.objects.get(order_number='test_api_2')
+    except Exception: 
+      self.fail('Cart was not created')
+
+    try:
+      Product.objects.get(name='2TShirtsPlusOnesieSET_1stChristmas')
+    except Exception: 
+      self.fail('Product creation error')
+
+    try:
+      Cart.object.get(order_number_internal='test_api_2')
+    except Exception: 
+      self.fail('Cart was not created')
+
+
 
   def test_known_product_giftbox(self):
     """
@@ -96,31 +117,19 @@ class ApiUploadTests(TestCase):
     {
       "carts": [
         {
-          "Code":  "123",
-          "Product Type": "2TShirtsPlusOnesieSET_1stChristmas",
-          "Main design file name (.png)": "main",
-          "Dad title image file (.png)": "main_papa",
-          "Mom title image file (.png)": "main_mama",
-          "Baby’s name (Text)": "main_baby",
-          "Dad Tshirt Size": "l",
-          "Mom Tshirt Size": "m",
-          "Baby’s OneSie Size": "s",
-          # Required only for GIFTBOX
-          # "Size": "",
+          "Code":  "test_api_3",
+          "Product Type": "GIFTBOX",
+          "Size": "l",
           "Shipping Fullname": "John Doe",
           "Phone": "+1 202-918-2132",
-          # Optional
-          # "order date": "",
           "Email": "me@asd.com",
           "Address1": "291 Reeves Street",
-          # Optional
-          # "Address2": "",
+          "Address2": "293 Reeves Street",
           "City": "Green Bay",
           "Province": "Wisconsin",
           "Zip": "54301",
           "Country Code": "USA",
-          # Not required for 2TShirtsPlusOnesieSET_1stChristmas
-          # "UnFulfill Quantity": "",
+          "UnFulfill Quantity": 1,
           # "Printer Design Url Back": "",
           # "Printer Design Url Front": ""
         }
@@ -135,33 +144,19 @@ class ApiUploadTests(TestCase):
     """
     {"carts": [
         {
-          "Code":  "123",
-          "Product Type": "2TShirtsPlusOnesieSET_1stChristmas",
-          "Main design file name (.png)": "main",
-          "Dad title image file (.png)": "main_papa",
-          "Mom title image file (.png)": "main_mama",
-          "Baby’s name (Text)": "main_baby",
-          "Dad Tshirt Size": "l",
-          "Mom Tshirt Size": "m",
-          "Baby’s OneSie Size": "s",
-          # Required only for GIFTBOX
-          # "Size": "",
+          "Code":  "test_api_4",
+          "Product Type": "My Product",
           "Shipping Fullname": "John Doe",
           "Phone": "+1 202-918-2132",
-          # Optional
-          # "order date": "",
           "Email": "me@asd.com",
           "Address1": "291 Reeves Street",
-          # Optional
-          # "Address2": "",
           "City": "Green Bay",
           "Province": "Wisconsin",
           "Zip": "54301",
           "Country Code": "USA",
-          # Not required for 2TShirtsPlusOnesieSET_1stChristmas
-          # "UnFulfill Quantity": "",
-          # "Printer Design Url Back": "",
-          # "Printer Design Url Front": ""
+          "UnFulfill Quantity": 2,
+          "Printer Design Url Back": "",
+          "Printer Design Url Front": ""
         },
       ]}
     pass

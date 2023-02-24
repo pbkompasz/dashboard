@@ -3,22 +3,26 @@
 
 {% block content %}
   <h2>#{{ cart.order_number }}</h2>
-  {% if cart.cartstatus.status.name != 'production' or cart.cartstatus.status.name != 'shipped' %}
+  {% if cart.is_cancellable %}
     <form action="{% url 'cancel_order' cart.order_number_internal %}" method="post">
       {% csrf_token %}
-      <input type="submit" value="Cancel Order">
+      {% bootstrap_button content='Cancel Order' button_type='submit' %}
     </form>
+  {% else %}
+    <div>Cart cannot be cancelled</div>
+      <button disabled class='btn btn-primary' >Cancel order</button>
   {% endif %}
-  {% if cart.cartstatus.status.name != 'shipped' %}
     <form action="{% url 'update' cart.order_number_internal %}" method="post">
       {% csrf_token %}
       <fieldset>
         <legend><h1>Change address</h1></legend>
-        {% comment %} TODO Errors {% endcomment %}
           {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
           {% bootstrap_form form %}
       </fieldset>
-      <input type="submit" value="Change Address">
+    {% if cart.is_address_updatable %}
+      {% bootstrap_button content='Change address' button_type='submit' %}
+    {% else %}
+      <button disabled class='btn btn-primary'>Change address</button>
+    {% endif %}
     </form>
-  {% endif %}
 {% endblock content %}

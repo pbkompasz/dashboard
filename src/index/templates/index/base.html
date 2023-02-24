@@ -5,12 +5,12 @@
 {% bootstrap_javascript %}
 
 {# Display django.contrib.messages as Bootstrap alerts #}
-{% bootstrap_messages %}
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <link rel="stylesheet" href="{% static 'index/style.css' %}">
+    <script src="https://js.stripe.com/v3/"></script>
     <title>
     {% block title %}
       {% if is_logged_in %}
@@ -24,16 +24,17 @@
 </head>
 
 <body>
+
     <div id="sidebar" class='col-2'>
         {% block sidebar %}
         {% if is_logged_in %}
         <div> Welcome, {{ user }}</div>
         <ul>
+          <li><a href="/dashboard">Home</a></li>
           <li><a href="/dashboard/orders">Orders</a></li>
           <li><a href="/dashboard/catalog">Catalog</a></li>
           <li><a href="/dashboard/upload">Upload</a></li>
           <li><a href="/dashboard/payments">Payments</a></li>
-          {% comment %} TODO {% endcomment %}
           <li><a href="{% url 'logout' %}">Logout</a></li>
         </ul>
         {% else %}
@@ -47,6 +48,7 @@
 
     <div id="content">
       {# Display a form #}
+      {% bootstrap_messages %}
 
         {% block base_content %}{% endblock %}
     </div>

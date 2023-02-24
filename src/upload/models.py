@@ -7,6 +7,7 @@ from django.db.models.signals import post_save
 
 from order.models import Status, Cart, Product, CartItem, ImageDesign, CartStatus
 from payment.models import Invoice
+from api.models import ApiUpload
 
 import datetime
 import csv
@@ -109,21 +110,8 @@ STRUCT = [
   },
 ]
 
-class ApiUpload(models.Model):
-  raw = models.JSONField()
-
 class FileUpload(models.Model):
   file = models.FileField()
-
-  def save(self, *args, **kwargs):
-    if not self.pk:
-      super().save(*args, **kwargs)
-      self.save()
-      upload = Upload(
-        upload_method = 'MANUAL',
-        file_upload = self,
-      )
-      upload.save()
 
   # Return value or default if missing
   def get_value_for_column_name(self, column_name):
@@ -457,6 +445,14 @@ class FileUpload(models.Model):
   def add_item_to_cart(self, cart, cart_item):
 
     pass
+
+@receiver(post_save, sender=FileUpload)
+def my_handler2(sender, instance, **kwargs):
+  upload = Upload(
+    upload_method = 'MANUAL',
+    file_upload = instance,
+  )
+  upload.save()
 
 class Upload(models.Model):
   # belongs_to = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)

@@ -42,15 +42,20 @@
       <tr>
         <th>Name</th>
         <th>Token</th>
-        <th>Update</th>
-        <th>Remove</th>
+        {% comment %} <th>Update</th>
+        <th>Remove</th> {% endcomment %}
       </tr>
       {% for payment_method in payment_methods %}
         <tr>
           <td>{{ payment_method.name }}</td>
-          <td>{{ payment_method.token }}</td>
-          <td><a href="{% url 'update_payment_method' payment_method.id %}">Update</a></td>
-          <td><a href="{% url 'remove_payment_method' payment_method.id %}">Remove</a></td>
+          <td>
+            {% if payment_method.token %}
+              {{ payment_method.token }}
+            {% else %}
+              <a href="{% url 'setup' payment_method.id %}">Finish setup</a>
+            {% endif %}
+          </td>
+          {% comment %} <td><a href="{% url 'remove_payment_method' payment_method.id %}">Remove</a></td> {% endcomment %}
         </tr>
       {% endfor %}
       </table>

@@ -46,6 +46,13 @@ class Cart(models.Model):
   invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE, blank=True, null=True)
   date_closed_at = models.DateField(default=datetime.date.today)
 
+  def is_cancellable(self):
+    return not self.cartstatus.status.name in ['Cancelled', 'Production', 'Shipped']
+
+  def is_address_updateable(self):
+    return not self.cartstatus.status.name in ['Cancelled', 'Shipped']
+
+
 @receiver(post_save, sender=Cart)
 def my_handler(sender, instance, **kwargs):
   status, _ = Status.objects.get_or_create(
@@ -67,6 +74,15 @@ class CartItem(models.Model):
   design_1_source = models.ForeignKey(ImageDesign, on_delete=models.CASCADE, null=True)
   front_pdf = models.CharField(max_length=15, default='')
   back_pdf = models.CharField(max_length=15, default='')
+
+@receiver(post_save, sender=CartItem)
+def my_handler(sender, instance, **kwargs):
+  cart = instance.cart
+  cost = 0
+  for ci in cart.cartitem_set:
+    cost += ci.cost
+  cart.total_cost = cost
+  cart.save()
 
 class CartStatus(models.Model):
   status = models.ForeignKey(Status, on_delete=models.CASCADE)

@@ -1,12 +1,16 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.views import View
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, views, logout as auth_logout
 from django.urls import reverse_lazy
 from django.contrib import messages
+from django.conf import settings
+from django.contrib.auth.models import User
 
+from payment.models import UserPaymentMethod
+
+import stripe
 
 # Create your views here.
 
@@ -32,15 +36,25 @@ class SignupView(View):
 
   def post(self, request, *args, **kwargs):
     form = UserCreationForm(request.POST)
-    print(form)
     if form.is_valid():
+      stripe.api_key = settings.STRIPE_SECRET_KEY
+      customer = stripe.Customer.create()
       form.save()
       username = form.cleaned_data.get('username')
       raw_password = form.cleaned_data.get('password')
-      user = authenticate(username=username, password=raw_password)
+      authenticate(username=username, password=raw_password)
+      user = User.objects.get(username=username)
+      payment_method = UserPaymentMethod(
+        belongs_to=user,
+        name='STRIPE',
+        customer=customer,
+      )
+      payment_method.save()
       resp = login(request, user)
       print(resp)
       return render(request, 'index/index.html')
+    else:
+      messages.error(request, form.errors)
     return render(request, 'index/signup.html', {'form': form})
 
 class LoginView(views.LoginView):
