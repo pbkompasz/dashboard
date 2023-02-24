@@ -29,20 +29,15 @@ class JSONDetailView(APIView):
 
   def save_upload(self):
     data =  self.request.data
-    # raw = serializers.serialize("json", data)
-    # print(data, raw)
     api_upload = ApiUpload(raw=data)
     api_upload.save() 
     return api_upload
   
   def get_value(self, row, attribute):
-    # s = next((item for i, item in enumerate(STRUCT) if item['variable_name'] == attribute), None)    
-    # print(attribute)
     for t in STRUCT:
       if t['variable_name'] == attribute:
         s = t
 
-    print(s)
     for c_name in s['column_names']:
       try:
         return row[c_name]
@@ -57,7 +52,6 @@ class JSONDetailView(APIView):
     for d in data:
       valid, message = self.is_row_valid(d)
       if not valid:
-        print(message)
         messages.append({'message': message})
       cart, _ = Cart.objects.get_or_create(
         # store=partner,
@@ -71,7 +65,6 @@ class JSONDetailView(APIView):
         client_phone=self.get_value(d, 'client_phone'),
       )
       cart.save()
-      print(cart)
       new_carts.append(cart)
     
     return new_carts, messages
@@ -116,9 +109,7 @@ class JSONDetailView(APIView):
   def post(self, request, *args, **kwargs):
     partner = request.user
     data = {}
-    print('here')
     valid, message = self.is_json_valid(data)
-    print(data)
     if not valid:
       context = {
         'status': '400', 'message': message, 
@@ -130,7 +121,6 @@ class JSONDetailView(APIView):
     self.save_upload()
 
     carts, messages = self.create_or_update_cart(request.data['carts'], partner)
-    print(carts, messages)
     invoice = self.get_or_create_invoice(carts)
 
     context = {

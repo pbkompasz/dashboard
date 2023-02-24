@@ -77,10 +77,11 @@ class CartItem(models.Model):
 
 @receiver(post_save, sender=CartItem)
 def my_handler(sender, instance, **kwargs):
-  cart = instance.cart
+  cart = Cart.objects.get(order_number_internal=instance.cart.order_number_internal)
   cost = 0
-  for ci in cart.cartitem_set:
-    cost += ci.cost
+  for ci in cart.cartitem_set.all():
+    if not ci.cost == None:
+      cost += ci.cost
   cart.total_cost = cost
   cart.save()
 

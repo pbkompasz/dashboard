@@ -15,7 +15,6 @@ import stripe
 # Create your views here.
 
 def is_logged_in(request):
-  print('is')
   return request.user.is_authenticated
 
 def index(request):
@@ -50,8 +49,12 @@ class SignupView(View):
         customer=customer,
       )
       payment_method.save()
+      payment_method2 = UserPaymentMethod(
+        belongs_to=user,
+        name='PayPal',
+      )
+      payment_method2.save()
       resp = login(request, user)
-      print(resp)
       return render(request, 'index/index.html')
     else:
       messages.error(request, form.errors)

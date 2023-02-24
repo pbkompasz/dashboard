@@ -42,7 +42,6 @@ class UploadIndexView(ListView):
     except Exception as e:
       return HttpResponse('Empty file', status=400)
     carts = doc.process_csv_body(csv_file, header_descriptor, partner, self.request)
-    print(carts)
     return redirect(reverse('index',
       # kwargs={ 'carts': carts, 'payment': payment, },
     ))
