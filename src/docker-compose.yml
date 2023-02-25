@@ -22,6 +22,6 @@ services:
       - db
 
 # Steps
-# Load data:  sudo docker-compose run web python manage.py loaddata catalog/fixtures/product.
+# Load data:  sudo docker-compose run web python manage.py loaddata catalog/fixtures/product
 #             sudo docker-compose run web python manage.py loaddata order/fixtures/status   
 # 
