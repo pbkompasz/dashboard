@@ -2,15 +2,44 @@
 
 {% block content %}
   {% if product_list %}
-    <div class="products">
+    <div class="card-deck">
       {% for product in product_list %}
-        <div>
+      <div class="card col-3">
+        {% comment %} <img src="..." class="card-img-top" alt="..."> {% endcomment %}
+          <div class='card-header'>
+            <h6 class="card-title">{{product.name}}</h6>
+          </div>
+          <div class='card-body'>
+            <p class="card-subtitle mb-2">
+              Some description
+              {{product.description}}
+            </p>
+            <div class="cart-text">
+              <div>
+                Width
+                {{ product.product_size.width }}
+              </div>
+              <div>
+                Height
+                {{ product.product_size.height }}
+              </div>
+            </div>
+          </div>
+          <div class='card-footer'>
+            {% comment %} <a href="{% url 'catalog:details' cart.order_number_internal %}" class="card-link">Details</a> {% endcomment %}
+            <a href="#" class="card-link">Details</a>
+            {% if product.is_private %}
+              <a class='card-link' href="/dashboard/catalog/{{product.id}}/update">Update</a>
+            {% endif %}
+          </div>
+      </div>
+        {% comment %} <div>
           <h3 class="name">{{ product.name }}</h3>
           {% if product.is_private %}
             <a href="/dashboard/catalog/{{product.id}}/update">Update</a>
           {% endif %}
           <div>
-          <div class="name">Details</div>
+            <div class="name">Details</div>
             <div>
               Width
               {{ product.product_size.width }}
@@ -20,7 +49,7 @@
               {{ product.product_size.height }}
             </div>
           </div>
-        </div> 
+        </div>  {% endcomment %}
       {% endfor %}
     </div>
   {% else %}

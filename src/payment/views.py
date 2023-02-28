@@ -21,19 +21,16 @@ class PaymentListView(ListView):
         )
     context['payment_methods'] = UserPaymentMethod.objects.all()
     context['form'] = AddPaymentForm()
-    payment_method = UserPaymentMethod.objects.get(belongs_to=self.request.user)
-    stripe.api_key = settings.STRIPE_SECRET_KEY
-    list = stripe.PaymentMethod.list(
-      customer=payment_method.customer['id'],
-      # type="card",
-    )
-    if len(list.data) > 0:
-      payment_method.token = list.data[0].id
-      payment_method.save()
+    # payment_method = UserPaymentMethod.objects.get(belongs_to=self.request.user)
+    # stripe.api_key = settings.STRIPE_SECRET_KEY
+    # list = stripe.PaymentMethod.list(
+    #   customer=payment_method.customer['id'],
+    #   # type="card",
+    # )
+    # if len(list.data) > 0:
+    #   payment_method.token = list.data[0].id
+    #   payment_method.save()
     
-    print(list.data,
-          payment_method.customer
-          )
     return context
 
 class SetupPaymentMethodView(DetailView):
@@ -55,7 +52,6 @@ class SetupPaymentMethodView(DetailView):
         },
       },
     )
-    print(intent)
     context['client_secret']=intent.client_secret
     context['stripe_account']=payment_method.customer['id']
     context['published_key']=settings.STRIPE_PUBLISHABLE_KEY

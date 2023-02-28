@@ -2,15 +2,16 @@
 
 
 {% block content %}
-  <form action="{% url 'index' %}" method="post" enctype='multipart/form-data'>
-    {% csrf_token %}
-    <input type="file" accept=".csv" name="file" required></input>
-    <input type="submit" value="Submit">
-  </form>
+  
   <div class="list">
-    <h2>Uploaded forms</h2>
-    <table>
-      <tr>
+    <div class='row justify-content-between pd-b-5 pd-l-15 pd-r-15'> 
+      <h2>Uploaded forms</h2>
+      <button class='btn btn-primary' type="button" data-toggle="modal" data-target="#exampleModalLong">Upload form</button>
+      
+    </div>
+    <table class='table'>
+      {% comment %} <tr> {% endcomment %}
+      <thead class="thead-primary">
         <th>ID</th>
         <th>Date uploaded</th>
         <th>Upload method</th>
@@ -18,7 +19,8 @@
         <th>Status</th>
         {% comment %} <th>Order</th>
         <th>Payment</th> {% endcomment %}
-      </tr>
+      {% comment %} </tr> {% endcomment %}
+      </thead>
       {% if uploads %}
         {% for upload in uploads %}
           <tr>
@@ -50,4 +52,32 @@
       {% endif %}
     </table>
   </div>
+
+  <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Upload form</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action="{% url 'index' %}" method="post" enctype='multipart/form-data'>
+          <div class="modal-body">
+              {% csrf_token %}
+              <div class="custom-file">
+                <input type="file" class="custom-file-input" name='file' accept='.csv' id="customFile">
+                <label class="custom-file-label" for="customFile">Choose file</label>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Upload</button>
+          </div>
+        </form>
+      </div>
+    </div>
+   
+  </div>
+
 {% endblock content %}

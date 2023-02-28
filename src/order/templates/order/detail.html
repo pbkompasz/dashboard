@@ -2,6 +2,21 @@
 
 {% block content %}
   {% if cart %}
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb breadcrumb-style1 mg-b-0">
+      <li class="breadcrumb-item"><a href="#">Orders</a></li>
+      <li class="breadcrumb-item active" aria-current="page">{{ cart.order_number }}</li>
+    </ol>
+  </nav>
+  {% if cart.cartstatus.status.name == 'Approved' %}
+    <span class="badge badge-primary">Approved</span>
+  {% elif cart.cartstatus.status.name == 'Production' %}
+    <span class="badge badge-info">Production</span>
+  {% elif cart.cartstatus.status.name == 'Shipped' %}
+    <span class="badge badge-info">Shipped</span>
+  {% else %}
+    <span class="badge badge-danger">Cancelled</span>
+  {% endif %}
   <ul>
     {{ cart.cartitems }}
     <li>
@@ -20,10 +35,6 @@
     <li>
       <div>To</div>
       <div>{{ cart.client_city }}</div>
-    </li>
-    <li>
-      <div>Status:</div>
-      <div>{{ cart.cartstatus.status.name }}</div>
     </li>
     <li>
       <div>Cost:</div>

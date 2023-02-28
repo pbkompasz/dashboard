@@ -29,7 +29,6 @@ class OrderDetailView(DetailView):
 
 def cancel(request, pk):
   if (request.POST):
-    print(pk)
     try:
       cart = Cart.objects.get(order_number_internal=pk)
       if cart.is_cancellable():

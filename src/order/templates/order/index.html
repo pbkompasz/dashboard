@@ -3,17 +3,17 @@
 {% block content %}
   
   {% if cart_list %}
-  <table>
+  <table class='table'>
     <tr>
-      <th>Id</th>
-      <th>Status</th>
-      <th>Date Placed</th>
-      <th>Order Cost</th>
-      <th>Update</th>
+      <th scope="col">Id</th>
+      <th scope="col">Status</th>
+      <th scope="col">Date Placed</th>
+      <th scope="col">Order Cost</th>
+      <th scope="col">Update</th>
     </tr>
     {% for cart in cart_list %}
     <tr>
-      <td><a href="{% url 'detail' cart.order_number_internal %}">{{ cart.order_number }}</a></td>
+      <td scope="row"><a href="{% url 'details' cart.order_number_internal %}">{{ cart.order_number }}</a></td>
       <td>{{ cart.cartstatus.status.name }}</td>
       <td>{{ cart.cartstatus.date_started }}</td>
       <td>{{ cart.total_cost }}</td>

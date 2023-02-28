@@ -5,7 +5,48 @@
 <h1>Create private product</h1>
 <form action="{% url 'catalog:create' %}" method="post" enctype='multipart/form-data'>
   {% csrf_token %}
-  {% bootstrap_form form %}
-  {% bootstrap_button content='Create' button_type='submit' %}
+  {% comment %} {% bootstrap_form form %} {% endcomment %}
+  {% comment %} {% bootstrap_button content='Create' button_type='submit' %} {% endcomment %}
+
+  <div class="form-group">
+    <label for="formGroupExampleInput" class="d-block">Name</label>
+    <div class="input-group">
+      <input type="text" class="form-control" aria-label="Name">
+    </div>
+  </div>
+
+  <div class='form-group'>
+    <label for="formGroupExampleInput" class="d-block">Cut file</label>
+    <div class="custom-file">
+      <input type="file" class="custom-file-input" id="customFile">
+      <label class="custom-file-label" for="customFile">Choose file</label>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      <label for="formGroupExampleInput" class="d-block">Width</label>
+      <div class="input-group">
+        <input type="text" class="form-control" aria-label="Width in inch">
+        <div class="input-group-append">
+          <span class="input-group-text">inch</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group col-md-6">
+      <label for="formGroupExampleInput" class="d-block">Height</label>
+      <div class="input-group">
+        <input type="text" class="form-control" aria-label="Height in inch">
+        <div class="input-group-append">
+          <span class="input-group-text">inch</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn btn-primary" type="submit">Submit</button>
+  <button class="btn btn-secondary" type="cancel">Cancel</button>
+
 </form>
 {% endblock content %}

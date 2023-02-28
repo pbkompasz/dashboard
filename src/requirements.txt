@@ -6,3 +6,4 @@ pyyaml
 django-bootstrap-v5
 stripe
 python-dotenv
+django-gulp

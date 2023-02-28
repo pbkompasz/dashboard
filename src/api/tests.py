@@ -90,7 +90,6 @@ class ApiUploadTests(TestCase):
       json.dumps(data),
       content_type="application/json", )
     self.assertEqual(resp.status_code, 200)
-    print(resp.data)
 
     try:
       Cart.objects.get(order_number='test_api_2')

@@ -431,7 +431,6 @@ class FileUpload(models.Model):
     #     cart=cart,
     #     status=status,
     #   )
-    #   print('here')
     #   cart_status.save()
 
       # cart.cartstatus = cart_status

@@ -4,13 +4,13 @@
 {% block content %}
   <div class='invoices'>
     <h2>Paid invoices</h2>
-    <table>
-      <tr>
+    <table class='table'>
+      <thead class='thead-primary'>
         <th>Id</th>
         <th>Date Approved</th>
         <th>Date Paid</th>
         <th>Payment</th>
-      </tr>
+      </thead>
       {% if invoice_list %}
         {% for invoice in invoice_list %}
           <tr>
@@ -31,40 +31,85 @@
     </table>
   </div>
   
+  {% comment %} <ion-icon name="logo-paypal"></ion-icon> {% endcomment %}
+  
 
   <h2>Added Payment Methods</h2>
-  {% if not payment_methods %}
-    <div class="warn">
-      No payment methods
-    </div>
-  {% else %}
-    <table>
+  {% if payment_methods %}
+    <table class='table'>
       <tr>
         <th>Name</th>
         <th>Token</th>
-        {% comment %} <th>Update</th>
-        <th>Remove</th> {% endcomment %}
+        <th>Status</th>
+        <th>Remove</th>
       </tr>
       {% for payment_method in payment_methods %}
         <tr>
           <td>{{ payment_method.name }}</td>
           <td>
+            {{ payment_method.token }}
+          </td>
+          <td>
             {% if payment_method.token %}
-              {{ payment_method.token }}
+              Setup completed
             {% else %}
               <a href="{% url 'setup' payment_method.id %}">Finish setup</a>
             {% endif %}
           </td>
-          {% comment %} <td><a href="{% url 'remove_payment_method' payment_method.id %}">Remove</a></td> {% endcomment %}
+          <td><a href="#">Remove</a></td>
         </tr>
       {% endfor %}
-      </table>
-    
+    </table>
+  {% else %}
+    <div class="warn">
+      No payment methods
+    </div>
   {% endif %}
-  <form action="/your-name/" method="post" class='payment-form'>
+  <button class='btn btn-primary' type="button" data-toggle="modal" data-target="#addPaymentModal">Add payment method</button>
+  <div class="modal fade" id="addPaymentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Upload form</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action="{% url 'index' %}" method="post" enctype='multipart/form-data'>
+          <div class="modal-body">
+            {% csrf_token %}
+            <div class="dropdown">
+              <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Type
+              </button>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item d-flex flex-row align-items-center" href="#">
+                  <i class="fab fa-cc-paypal fa-2x mg-r-10"></i>
+                  <div>PayPal</div>
+                </a>
+                <a class="dropdown-item d-flex flex-row align-items-center" href="#">
+                  <i class="fab fa-cc-stripe fa-2x mg-r-10"></i>
+                  <div>Stripe</div>
+                </a>
+                <a class="dropdown-item d-flex flex-row align-items-center" href="#">
+                  <i class="fab fa-credit-card fa-2x mg-r-10"></i>
+                  <div>Credit Card</div>
+                </a>
+              </div>
+            </div>
+            asd
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Upload</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% comment %} <form action="/your-name/" method="post" class='payment-form'>
     {% csrf_token %}
-    {% comment %} {{ form }} {% endcomment %}
     {% bootstrap_form form %}
     {% bootstrap_button content='Submit' button_type="submit" %}
-  </form>
+  </form> {% endcomment %}
 {% endblock content %}

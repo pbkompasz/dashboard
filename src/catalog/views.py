@@ -28,7 +28,6 @@ class ProductCreateView(CreateView):
     return context
 
   def post(self, *args, **kwargs):
-    print(self.request.FILES)
     form = self.request.POST
     product_size, created = ProductSize.objects.get_or_create(
       width=form['product_size_width'],
@@ -50,7 +49,6 @@ class ProductUpdateView(UpdateView):
 
   def get_context_data(self, **kwargs):
     context = super().get_context_data(**kwargs)
-    print(context['product'].cut_file)
     context['form'] = UpdateForm({
       'name' :context['product'].name,
       # 'cut_file' :context['product'].cut_file,
