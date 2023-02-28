@@ -28,6 +28,11 @@ body {
   min-height: 90vh;
 }
 
+/* td {
+  text-align: center;
+} */
+
+/* 
 table {
   border-collapse: collapse;
   border: 1px solid black;
@@ -69,4 +74,4 @@ table tr th:last-child {
 
 .payment-form > * {
   margin: 0 0 0.5rem 0;
-}
+} */

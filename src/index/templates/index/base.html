@@ -10,6 +10,9 @@
 <html lang="en">
 <head>
     <link rel="stylesheet" href="{% static 'index/style.css' %}">
+    <link rel="stylesheet" href="{% static 'index/main/lib/@fortawesome/fontawesome-free/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'index/main/lib/ionicons/css/ionicons.min.css' %}">
+    <link rel="stylesheet" href="{% static 'index/main/assets/css/dashforge.css' %}">
     <script src="https://js.stripe.com/v3/"></script>
     <title>
     {% block title %}
@@ -29,18 +32,18 @@
         {% block sidebar %}
         {% if is_logged_in %}
         <div> Welcome, {{ user }}</div>
-        <ul>
-          <li><a href="/dashboard">Home</a></li>
-          <li><a href="/dashboard/orders">Orders</a></li>
-          <li><a href="/dashboard/catalog">Catalog</a></li>
-          <li><a href="/dashboard/upload">Upload</a></li>
-          <li><a href="/dashboard/payments">Payments</a></li>
-          <li><a href="{% url 'logout' %}">Logout</a></li>
+        <ul class="nav nav-pills">
+          <li class='nav-item'><a {% if request.path == '/dashboard/' %} class='nav-link active' {% else %} class='nav-link' {% endif %} href="/dashboard">Home</a></li>
+          <li class='nav-item'><a {% if request.path == '/dashboard/orders/' %} class='nav-link active' {% else %} class='nav-link' {% endif %} href="/dashboard/orders/">Orders</a></li>
+          <li class='nav-item'><a {% if request.path == '/dashboard/catalog/' %} class='nav-link active' {% else %} class='nav-link' {% endif %} href="/dashboard/catalog/">Catalog</a></li>
+          <li class='nav-item'><a {% if request.path == '/dashboard/upload/' %} class='nav-link active' {% else %} class='nav-link' {% endif %} href="/dashboard/upload/">Upload</a></li>
+          <li class='nav-item'><a {% if request.path == '/dashboard/payments/' %} class='nav-link active' {% else %} class='nav-link' {% endif %} href="/dashboard/payments/">Payments</a></li>
+          <li class='nav-item'><a class='nav-link' href="{% url 'logout' %}">Logout</a></li>
         </ul>
         {% else %}
         <ul>
-          <li><a href="{% url 'login' %}">Login</a></li>
-          <li><a href="{% url 'signup' %}">Signup</a></li>
+          <li class='nav-item'><a class='nav-link' href="{% url 'login' %}">Login</a></li>
+          <li class='nav-item'><a class='nav-link' href="{% url 'signup' %}">Signup</a></li>
         </ul>
         {% endif %}
         {% endblock %}
@@ -48,9 +51,19 @@
 
     <div id="content">
       {# Display a form #}
-      {% bootstrap_messages %}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+      {% comment %} {% bootstrap_messages %} {% endcomment %}
 
         {% block base_content %}{% endblock %}
     </div>
+    <script src="{% static 'index/main/lib/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'index/main/lib/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'index/main/lib/feather-icons/feather.min.js' %}"></script>
+
+    <script src="{% static 'index/main/assets/js/dashforge.js' %}"></script>
 </body>
 </html>
