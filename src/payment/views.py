@@ -19,7 +19,9 @@ class PaymentListView(ListView):
     context['invoices_paid'] = Invoice.objects.exclude(
       date_paid = None
         )
-    context['payment_methods'] = UserPaymentMethod.objects.all()
+    context['payment_methods'] = UserPaymentMethod.objects.all().filter(
+      belongs_to=self.request.user
+    )
     context['form'] = AddPaymentForm()
     # payment_method = UserPaymentMethod.objects.get(belongs_to=self.request.user)
     # stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -39,7 +41,10 @@ class SetupPaymentMethodView(DetailView):
 
   def get_context_data(self, *args, **kwargs):
     context = super(SetupPaymentMethodView, self).get_context_data(*args, **kwargs)
-    payment_method = UserPaymentMethod.objects.get(belongs_to=self.request.user)
+    payment_method = UserPaymentMethod.objects.get(
+      belongs_to=self.request.user,
+      id=self.object.id
+    )
     stripe.api_key = settings.STRIPE_SECRET_KEY
     intent = stripe.PaymentIntent.create(
       customer=payment_method.customer['id'],

@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 
 from . import views
 
+app_name = 'orders'
 urlpatterns = [
     path('', login_required(views.OrderListView.as_view()), name='index'),
     path('<int:pk>', login_required(views.OrderDetailView.as_view()), name='details'),

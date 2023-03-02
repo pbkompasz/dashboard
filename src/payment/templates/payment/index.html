@@ -2,6 +2,11 @@
 {% load bootstrap5 %}
 
 {% block content %}
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb breadcrumb-style1 mg-b-0">
+      <li class="breadcrumb-item active" aria-current="page">Payments</li>
+    </ol>
+  </nav>
   <div class='invoices'>
     <h2>Paid invoices</h2>
     <table class='table'>
@@ -16,9 +21,27 @@
           <tr>
             <td>{{ invoice.id }}</td>
             {% comment %} <td><a href="{% url 'media' invoice.id %}">{{ invoice.id }}</a></td> {% endcomment %}
-            <td>{{ invoice.date_approved }}</td>
-            <td>{{ invoice.date_paid }}</td>
-            <td>{{ invoice.payment }}</td>
+            <td>
+              {% if not invoice.date_approved %}
+                Not Available
+              {% else %} 
+                {{ invoice.date_approved }}
+              {% endif %}
+            </td>
+            <td>
+              {% if not invoice.date_paid %}
+                Not Available
+              {% else %} 
+                {{ invoice.date_paid }}
+              {% endif %}
+            </td>
+            <td>
+              {% if not invoice.payment %}
+                Not Available
+              {% else %} 
+                {{ invoice.payment }}
+              {% endif %}
+            </td>
           </tr>
         {% endfor %}
       {% else %}

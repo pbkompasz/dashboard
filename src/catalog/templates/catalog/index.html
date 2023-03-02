@@ -1,13 +1,20 @@
 {% extends 'catalog/base.html' %}
 
 {% block content %}
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb breadcrumb-style1 mg-b-0">
+      <li class="breadcrumb-item"><a href="#">Catalog</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Products</li>
+    </ol>
+  </nav>
+  <a href="{% url 'catalog:create' %}">Create Product</a>
   {% if product_list %}
     <div class="card-deck">
       {% for product in product_list %}
-      <div class="card col-3">
-        {% comment %} <img src="..." class="card-img-top" alt="..."> {% endcomment %}
+        <div class="card col-3">
+          {% comment %} <img src="" class="card-img-top" alt="..."> {% endcomment %}
           <div class='card-header'>
-            <h6 class="card-title">{{product.name}}</h6>
+            <h6 class="card-title mg-t-5">{{product.name}}</h6>
           </div>
           <div class='card-body'>
             <p class="card-subtitle mb-2">
@@ -32,29 +39,10 @@
               <a class='card-link' href="/dashboard/catalog/{{product.id}}/update">Update</a>
             {% endif %}
           </div>
-      </div>
-        {% comment %} <div>
-          <h3 class="name">{{ product.name }}</h3>
-          {% if product.is_private %}
-            <a href="/dashboard/catalog/{{product.id}}/update">Update</a>
-          {% endif %}
-          <div>
-            <div class="name">Details</div>
-            <div>
-              Width
-              {{ product.product_size.width }}
-            </div>
-            <div>
-              Height
-              {{ product.product_size.height }}
-            </div>
-          </div>
-        </div>  {% endcomment %}
+        </div>
       {% endfor %}
     </div>
   {% else %}
     No items
   {% endif %}
-  <br/>
-  <a href="{% url 'catalog:create' %}">Create product</a>
 {% endblock content %}

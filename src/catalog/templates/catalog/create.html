@@ -2,7 +2,12 @@
 {% load bootstrap5 %}
 
 {% block content %}
-<h1>Create private product</h1>
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb breadcrumb-style1 mg-b-0">
+    <li class="breadcrumb-item"><a href="#">Catalog</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Create</li>
+  </ol>
+</nav>
 <form action="{% url 'catalog:create' %}" method="post" enctype='multipart/form-data'>
   {% csrf_token %}
   {% comment %} {% bootstrap_form form %} {% endcomment %}
@@ -11,14 +16,14 @@
   <div class="form-group">
     <label for="formGroupExampleInput" class="d-block">Name</label>
     <div class="input-group">
-      <input type="text" class="form-control" aria-label="Name">
+      <input type="text" class="form-control" aria-label="Name" name='name' id='name'>
     </div>
   </div>
 
   <div class='form-group'>
     <label for="formGroupExampleInput" class="d-block">Cut file</label>
     <div class="custom-file">
-      <input type="file" class="custom-file-input" id="customFile">
+      <input type="file" class="custom-file-input" id="cut_file" name='cut_file'>
       <label class="custom-file-label" for="customFile">Choose file</label>
     </div>
   </div>
@@ -27,7 +32,7 @@
     <div class="form-group col-md-6">
       <label for="formGroupExampleInput" class="d-block">Width</label>
       <div class="input-group">
-        <input type="text" class="form-control" aria-label="Width in inch">
+        <input type="text" class="form-control" aria-label="Width in inch" name='product_size_width'>
         <div class="input-group-append">
           <span class="input-group-text">inch</span>
         </div>
@@ -37,7 +42,7 @@
     <div class="form-group col-md-6">
       <label for="formGroupExampleInput" class="d-block">Height</label>
       <div class="input-group">
-        <input type="text" class="form-control" aria-label="Height in inch">
+        <input type="text" class="form-control" aria-label="Height in inch" name='product_size_height'>
         <div class="input-group-append">
           <span class="input-group-text">inch</span>
         </div>

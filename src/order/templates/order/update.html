@@ -2,9 +2,16 @@
 {% load bootstrap5 %}
 
 {% block content %}
+  <nav aria-label="breadcrumb">
+      <ol class="breadcrumb breadcrumb-style1 mg-b-0">
+        <li class="breadcrumb-item"><a href="{% url 'orders:index' %}">Orders</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'orders:details' cart.order_number_internal %}">{{ cart.order_number }}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Update</li>
+      </ol>
+    </nav>
   <div class='d-flex d-flex-row justify-content-between'>
     <h2>
-      <a href='{% url 'details' cart.order_number_internal %}'>#{{ cart.order_number }}</a>
+      <a href='{% url 'orders:details' cart.order_number_internal %}'>#{{ cart.order_number }}</a>
     </h2>
     {% if cart.is_cancellable %}
       <form action="{% url 'cancel_order' cart.order_number_internal %}" method="post">
@@ -19,7 +26,7 @@
     {% endif %}
   </div>
 
-  <form action="{% url 'update' cart.order_number_internal %}" method="post">
+  <form action="{% url 'orders:update' cart.order_number_internal %}" method="post">
     {% csrf_token %}
     <fieldset>
       <legend><h3>Update address</h3></legend>
@@ -86,13 +93,13 @@
     {% else %}
         <button disabled type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="top"
           title="{{cart.cartstatus.status.name}} order's address cannot be updated">
-          Cancel Order
+          Update Address
         </button>
     {% endif %}
   </form>
 
   {% comment %} TODO Tooltip not working {% endcomment %}
-  <script type="text/javascript">
+  <script>
     $('[data-toggle="tooltip"]').tooltip();
   </script>
 {% endblock content %}

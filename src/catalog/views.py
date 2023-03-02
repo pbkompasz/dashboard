@@ -29,6 +29,7 @@ class ProductCreateView(CreateView):
 
   def post(self, *args, **kwargs):
     form = self.request.POST
+    print(form)
     product_size, created = ProductSize.objects.get_or_create(
       width=form['product_size_width'],
       height=form['product_size_height'],

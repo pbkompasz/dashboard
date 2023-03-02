@@ -25,6 +25,20 @@ class OrderDetailView(DetailView):
   def get_context_data(self, *args, **kwargs):
     ctx = super().get_context_data(*args, **kwargs)
     ctx['cartitems'] = CartItem.objects.all().filter(cart=self.object)
+    # ctx['cartitems'] = [
+    #   {
+    #     'id': '123',
+    #     'name': 'Limited edition shirt',
+    #     'type': 'Gift',
+    #     'cost': '60.0',
+    #   },
+    #   {
+    #     'id': '124',
+    #     'name': 'Printout',
+    #     'type': 'Order',
+    #     'cost': '60.0',
+    #   },
+    # ]
     return ctx
 
 def cancel(request, pk):

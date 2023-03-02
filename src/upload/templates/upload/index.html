@@ -2,7 +2,11 @@
 
 
 {% block content %}
-  
+  <nav aria-label="breadcrumb mg-b-20">
+    <ol class="breadcrumb breadcrumb-style1">
+      <li class="breadcrumb-item active" aria-current="page">Upload</li>
+    </ol>
+  </nav>
   <div class="list">
     <div class='row justify-content-between pd-b-5 pd-l-15 pd-r-15'> 
       <h2>Uploaded forms</h2>
@@ -25,7 +29,7 @@
         {% for upload in uploads %}
           <tr>
             <td>{{ forloop.counter }}</td>
-            <td>{{ upload.date_uploaded }}</td>
+            <td>{{ upload.date_uploaded }} {{ upload.date_uploaded|time:"H:i" }}</td>
             <td>{{ upload.upload_method }}</td>
             <td>
               {% if upload.file_upload %}
@@ -77,7 +81,6 @@
         </form>
       </div>
     </div>
-   
   </div>
 
 {% endblock content %}

@@ -2,46 +2,56 @@
 
 {% block content %}
   {% if cart %}
-  <nav aria-label="breadcrumb">
-    <ol class="breadcrumb breadcrumb-style1 mg-b-0">
-      <li class="breadcrumb-item"><a href="#">Orders</a></li>
-      <li class="breadcrumb-item active" aria-current="page">{{ cart.order_number }}</li>
-    </ol>
-  </nav>
-  {% if cart.cartstatus.status.name == 'Approved' %}
-    <span class="badge badge-primary">Approved</span>
-  {% elif cart.cartstatus.status.name == 'Production' %}
-    <span class="badge badge-info">Production</span>
-  {% elif cart.cartstatus.status.name == 'Shipped' %}
-    <span class="badge badge-info">Shipped</span>
-  {% else %}
-    <span class="badge badge-danger">Cancelled</span>
-  {% endif %}
-  <ul>
-    {{ cart.cartitems }}
-    <li>
-      <div>Items({{cartitems.count}})</div>
-      <ol>
-        {% for item in cartitems %}  
-          <li>
-            {{ item.id }}
-            {{ item.product.name }}
-            {{ item.product.type }}
-            {{ item.cost }}
-          </li>
-        {% endfor %}
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb breadcrumb-style1 mg-b-0">
+        <li class="breadcrumb-item"><a href="{% url 'orders:index' %}">Orders</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ cart.order_number }}</li>
       </ol>
-    </li>
-    <li>
-      <div>To</div>
-      <div>{{ cart.client_city }}</div>
-    </li>
-    <li>
-      <div>Cost:</div>
-      <div>{{ cart.total_cost }}</div>
-    </li>
-  </ul>
-  <td><a href="{% url 'update' cart.order_number_internal %}">Update</a></td>
+    </nav>
+    <div class='bd col-6 pd-t-20 pd-b-20'>
+      {% if cart.cartstatus.status.name == 'Approved' %}
+        <span class="badge badge-primary">Approved</span>
+      {% elif cart.cartstatus.status.name == 'Production' %}
+        <span class="badge badge-info">Production</span>
+      {% elif cart.cartstatus.status.name == 'Shipped' %}
+        <span class="badge badge-info">Shipped</span>
+      {% else %}
+        <span class="badge badge-danger">Cancelled</span>
+      {% endif %}
+      <div class='d-flex justify-content-between'>
+        <h2>{{ cart.order_number }}</h2>
+        <a href="{% url 'orders:update' cart.order_number_internal %}">Update</a>
+      </div>
+      <p>{{ cart.description }}</p>
+      <div class='d-flex'>
+        <div class='col-8 d-flex'>
+          <div class='col-6'>
+            <div class='tx-gray-500 tx-bolder lh-7'>TO</div>
+            <div>{{ cart.client_city }}</div>
+          </div>
+          <div class='col-6'>
+            <div class='tx-gray-500 tx-bolder lh-7'>COST</div>
+            <div>{{ cart.total_cost }}</div>
+          </div>
+        </div>
+        <div class='col-4 d-flex flex-column'>
+          <div class='tx-bold'>
+            <div>Items({{cartitems.count}})</div>
+            {% for item in cartitems %}  
+              <div class='d-flex flex-row mg-t-10'>
+                <div class='col-6'>#{{ item.id }}</div>
+                <div class='col-6 tx-normal tx-12' style='text-align: right'>${{ item.cost }}</div>
+              </div>
+              <div class='bd-b d-flex flex-row'>
+                {% comment %} <div class='col-6'>{{ item.product.name }}</div> {% endcomment %}
+                <div class='tx-normal col-10'>{{ item.name }}/{{ item.type }}</div>
+                {% comment %} <div class='col-6'>{{ item.product.type }}</div> {% endcomment %}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
   {% else %}
     <p>No such order.</p>
   {% endif %}
