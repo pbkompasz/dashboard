@@ -43,6 +43,8 @@ class SignupView(View):
       raw_password = form.cleaned_data.get('password')
       authenticate(username=username, password=raw_password)
       user = User.objects.get(username=username)
+
+      # Create Stripe, Paypal payment methods
       payment_method = UserPaymentMethod(
         belongs_to=user,
         name='STRIPE',
@@ -54,7 +56,8 @@ class SignupView(View):
         name='PayPal',
       )
       payment_method2.save()
-      resp = login(request, user)
+
+      login(request, user)
       return render(request, 'index/index.html')
     else:
       messages.error(request, form.errors)
@@ -71,22 +74,14 @@ class LoginView(views.LoginView):
     messages.error(self.request,'Invalid username or password')
     return self.render_to_response(self.get_context_data(form=form)) 
 
+class ForgotPasswordView(View):
+  template_name = 'index/forgot-password.html'
+
+  def get(self, request, *args, **kwargs):
+    return render(request, 'index/forgot-password.html')
+
 def logout(request):
 
   if (request.method == 'GET'):
     auth_logout(request)
     return redirect('dashboard', )
-
-
-# class RegisterView():
-#   def get(self):
-#     return render(self.request, 'index/register')
-
-#   def post(self, *args, **kwargs):
-#       last_book = self.get_queryset().latest('publication_date')
-#       # Create user
-#       response = HttpResponse(
-#           # RFC 1123 date format.
-#           headers={'Last-Modified': last_book.publication_date.strftime('%a, %d %b %Y %H:%M:%S GMT')},
-#       )
-#       return response

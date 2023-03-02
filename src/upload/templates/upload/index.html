@@ -7,7 +7,7 @@
       <li class="breadcrumb-item active" aria-current="page">Upload</li>
     </ol>
   </nav>
-  <div class="list">
+  <div class="list d-flex flex-column">
     <div class='row justify-content-between pd-b-5 pd-l-15 pd-r-15'> 
       <h2>Uploaded forms</h2>
       <button class='btn btn-primary' type="button" data-toggle="modal" data-target="#exampleModalLong">Upload form</button>
@@ -55,7 +55,25 @@
         </tr>
       {% endif %}
     </table>
-  </div>
+    <nav aria-label="Page navigation example" class='align-self-end'>
+      <ul class="pagination mg-b-0">
+        {% if page_obj.has_previous %}
+          <li class="page-item"><a class="page-link page-link-icon" href="?page={{ page_obj.previous_page_number }}"><i data-feather="chevron-left"></i></a></li>
+        {% else %}
+          <li class="page-item disabled"><a class="page-link page-link-icon" href="#"><i data-feather="chevron-left"></i></a></li>
+        {% endif %}
+        {% if not page_obj.number == 1 %}
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">{{ page_obj.number|add:-1 }}</a></li>
+        {% endif %}
+          <li class="page-item active"><a class="page-link" href="#">
+            {{ page_obj.number }}
+          </a></li>
+        {% if page_obj.number < page_obj.paginator.num_pages %}
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">{{ page_obj.number|add:1 }}</a></li>
+        {% endif %}
+        <li class="page-item"><a class="page-link page-link-icon" href="?page={{ page_obj.next_page_number }}"><i data-feather="chevron-right"></i></a></li>
+      </ul>
+    </nav>
 
   <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
     <div class="modal-dialog" role="document">

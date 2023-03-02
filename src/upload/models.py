@@ -143,11 +143,11 @@ class FileUpload(models.Model):
           break
         except:
           pass
-      if ((pos is None) or (pos is '')) and (s['required']):
+      if ((pos == None) or (pos == '')) and (s['required']):
         print('Missing required column')
         raise Exception("Missing required field" + str(s['variable_name']))
         
-      header_descriptor[s['variable_name']] = pos if pos is (not None) or not '' else s['default']
+      header_descriptor[s['variable_name']] = pos if pos == (not None) or not '' else s['default']
 
     return header_descriptor
 
@@ -196,7 +196,7 @@ class FileUpload(models.Model):
           s['required']
         except:
           continue
-        if ((row[header_descriptor[s['variable_name']]]) is "" or None) and s['required']:
+        if ((row[header_descriptor[s['variable_name']]]) == "" or None) and s['required']:
           print('Missing required value ' + str(s['variable_name']))
           raise Exception("Missing required value " + str(s['variable_name']))
 

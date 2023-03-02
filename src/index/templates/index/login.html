@@ -12,7 +12,6 @@
 
       <form method="post">
         {% csrf_token %}
-        {% comment %} {{ form.as_p }} {% endcomment %}
         <div class="form-group">
           <label for="formGroupExampleInput" class="d-block">Username</label>
           <div class="input-group">
@@ -22,8 +21,7 @@
         <div class="form-group">
           <div class='d-flex d-flex-row justify-content-between'>
             <label for="formGroupExampleInput" class="d-block">Password</label>
-            {% comment %} TODO {% endcomment %}
-            <a href='#' tabindex='1'>Forgot password?</a>
+            <a href='{% url 'forgot_password' %}' tabindex='1'>Forgot password?</a>
           </div>
           <div class="input-group">
             <input type="password" tabindex='0' class="form-control" aria-label="Name" value='' name='password'>
@@ -35,8 +33,6 @@
           Don't have an account?
           <a href='{% url 'signup' %}'>Create an Account</a>
         </p>
-        {% comment %} {{ form.as_p }} {% endcomment %}
-        {% comment %} <button type="submit">Log In</button> {% endcomment %}
       </form>
     </div>
   </div>

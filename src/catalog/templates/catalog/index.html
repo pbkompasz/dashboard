@@ -7,9 +7,12 @@
       <li class="breadcrumb-item active" aria-current="page">Products</li>
     </ol>
   </nav>
-  <a href="{% url 'catalog:create' %}">Create Product</a>
+  <div class='d-flex justify-content-between align-items-center pd-x-10'>
+    <h2>Products</h2>
+    <a href="{% url 'catalog:create' %}" class='btn btn-primary mg-b-10'>Create Product</a>
+  </div>
   {% if product_list %}
-    <div class="card-deck">
+    <div class="card-deck bd pd-y-10 mg-x-10 mg-y-10">
       {% for product in product_list %}
         <div class="card col-3">
           {% comment %} <img src="" class="card-img-top" alt="..."> {% endcomment %}

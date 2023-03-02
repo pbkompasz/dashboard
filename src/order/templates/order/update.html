@@ -14,9 +14,9 @@
       <a href='{% url 'orders:details' cart.order_number_internal %}'>#{{ cart.order_number }}</a>
     </h2>
     {% if cart.is_cancellable %}
-      <form action="{% url 'cancel_order' cart.order_number_internal %}" method="post">
+      <form action="{% url 'orders:cancel_order' cart.order_number_internal %}" method="post">
         {% csrf_token %}
-        <button class='btn btn-primary'></button>
+        <button class='btn btn-primary'>Cancel Order</button>
       </form>
     {% else %}
         <button disabled type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="top"
@@ -85,10 +85,10 @@
       </div>
     </div>
 
-    {% if cart.is_address_updatable %}
-      <form action="{% url 'cancel_order' cart.order_number_internal %}" method="post">
+    {% if cart.is_address_updateable %}
+      <form action="{% url 'orders:cancel_order' cart.order_number_internal %}" method="post">
         {% csrf_token %}
-        <button class='btn btn-primary'></button>
+        <button class='btn btn-primary'>Update address</button>
       </form>
     {% else %}
         <button disabled type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="top"

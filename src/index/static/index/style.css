@@ -1,9 +1,12 @@
 #sidebar {
   width: 4rem;
+  transition: width 2s;
 }
 
 .extend {
   min-width: 13rem;
+  width: 13rem;
+  transition: width 2s;
 }
 
 .expanded, #sidebar > ul > p, #sidebar > ul > li > a > span {

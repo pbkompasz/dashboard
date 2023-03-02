@@ -20,7 +20,6 @@
         {% for invoice in invoice_list %}
           <tr>
             <td>{{ invoice.id }}</td>
-            {% comment %} <td><a href="{% url 'media' invoice.id %}">{{ invoice.id }}</a></td> {% endcomment %}
             <td>
               {% if not invoice.date_approved %}
                 Not Available
@@ -54,9 +53,6 @@
     </table>
   </div>
   
-  {% comment %} <ion-icon name="logo-paypal"></ion-icon> {% endcomment %}
-  
-
   <h2>Added Payment Methods</h2>
   {% if payment_methods %}
     <table class='table'>
@@ -99,11 +95,11 @@
           </button>
         </div>
         <form action="{% url 'index' %}" method="post" enctype='multipart/form-data'>
-          <div class="modal-body">
+          <div class="modal-body d-flex" style='gap: 15px'>
             {% csrf_token %}
             <div class="dropdown">
               <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Type
+                Provider
               </button>
               <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                 <a class="dropdown-item d-flex flex-row align-items-center" href="#">
@@ -114,13 +110,23 @@
                   <i class="fab fa-cc-stripe fa-2x mg-r-10"></i>
                   <div>Stripe</div>
                 </a>
+              </div>
+            </div>
+            <div class="dropdown">
+              <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Type
+              </button>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                 <a class="dropdown-item d-flex flex-row align-items-center" href="#">
-                  <i class="fab fa-credit-card fa-2x mg-r-10"></i>
-                  <div>Credit Card</div>
+                  <i class="fas fa-user fa-2x mg-r-10"></i>
+                  <div>Account</div>
+                </a>
+                <a class="dropdown-item d-flex flex-row align-items-center" href="#">
+                  <i class="fas fa-credit-card fa-2x mg-r-10"></i>
+                  <div>Card</div>
                 </a>
               </div>
             </div>
-            asd
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -130,9 +136,4 @@
       </div>
     </div>
   </div>
-  {% comment %} <form action="/your-name/" method="post" class='payment-form'>
-    {% csrf_token %}
-    {% bootstrap_form form %}
-    {% bootstrap_button content='Submit' button_type="submit" %}
-  </form> {% endcomment %}
 {% endblock content %}

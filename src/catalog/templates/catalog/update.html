@@ -1,4 +1,8 @@
 {% extends 'catalog/base.html' %}
+{% load bootstrap5 %}
+
+{% bootstrap_css %}
+{% bootstrap_javascript %}
 
 {% block content %}
   <nav aria-label="breadcrumb">
@@ -25,9 +29,9 @@
     <div class='form-group'>
       <label for="formGroupExampleInput" class="d-block">Cut file</label>
       <div class="custom-file">
-        {% comment %} TODO File not loaded {% endcomment %}
-        <input type="file" class="custom-file-input" id="cut_file" name='cut_file' value='{{ product.cut_file }}'>
-        <label class="custom-file-label" for="customFile">Choose file</label>
+        <input type="file" class="custom-file-input" id="customFile" name="myImage">
+        {% comment %} TODO File name doesn't show on label {% endcomment %}
+        <label class="custom-file-label" for="customFile"></label>
       </div>
     </div>
 

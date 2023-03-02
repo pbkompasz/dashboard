@@ -23,15 +23,6 @@ class PaymentListView(ListView):
       belongs_to=self.request.user
     )
     context['form'] = AddPaymentForm()
-    # payment_method = UserPaymentMethod.objects.get(belongs_to=self.request.user)
-    # stripe.api_key = settings.STRIPE_SECRET_KEY
-    # list = stripe.PaymentMethod.list(
-    #   customer=payment_method.customer['id'],
-    #   # type="card",
-    # )
-    # if len(list.data) > 0:
-    #   payment_method.token = list.data[0].id
-    #   payment_method.save()
     
     return context
 
@@ -45,6 +36,8 @@ class SetupPaymentMethodView(DetailView):
       belongs_to=self.request.user,
       id=self.object.id
     )
+
+    # TODO PayPal
     stripe.api_key = settings.STRIPE_SECRET_KEY
     intent = stripe.PaymentIntent.create(
       customer=payment_method.customer['id'],

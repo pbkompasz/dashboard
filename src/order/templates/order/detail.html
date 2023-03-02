@@ -13,6 +13,8 @@
         <span class="badge badge-primary">Approved</span>
       {% elif cart.cartstatus.status.name == 'Production' %}
         <span class="badge badge-info">Production</span>
+      {% elif cart.cartstatus.status.name == 'Registered' %}
+        <span class="badge badge-info">Registered</span>
       {% elif cart.cartstatus.status.name == 'Shipped' %}
         <span class="badge badge-info">Shipped</span>
       {% else %}
