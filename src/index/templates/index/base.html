@@ -1,14 +1,12 @@
 {% load static %}
 {% load bootstrap5 %}
-{# Load CSS and JavaScript #}
+
 {% bootstrap_css %}
 {% bootstrap_javascript %}
 
-{# Display django.contrib.messages as Bootstrap alerts #}
-
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <link rel="stylesheet" href="{% static 'index/style.css' %}">
     <link rel="stylesheet" href="{% static 'index/main/lib/@fortawesome/fontawesome-free/css/all.min.css' %}">
     <link rel="stylesheet" href="{% static 'index/main/lib/ionicons/css/ionicons.min.css' %}">
@@ -24,46 +22,211 @@
     {% endblock %}
 
     </title>
-</head>
+  </head>
 
-<body>
-
-    <div id="sidebar" class='col-2'>
+  <body>
+  
+    {% if is_logged_in %}
+          
+          
+    {% comment %} TODO Save sidebar state {% endcomment %}
+    <div class='d-flex d-flex-row'>
+      <div id="sidebar" class='bd-r'>
         {% block sidebar %}
-        {% if is_logged_in %}
-        <div> Welcome, {{ user }}</div>
-        <ul class="nav nav-pills">
-          <li class='nav-item'><a {% if request.path == '/dashboard/' %} class='nav-link active' {% else %} class='nav-link' {% endif %} href="/dashboard">Home</a></li>
-          <li class='nav-item'><a {% if request.path == '/dashboard/orders/' %} class='nav-link active' {% else %} class='nav-link' {% endif %} href="/dashboard/orders/">Orders</a></li>
-          <li class='nav-item'><a {% if request.path == '/dashboard/catalog/' %} class='nav-link active' {% else %} class='nav-link' {% endif %} href="/dashboard/catalog/">Catalog</a></li>
-          <li class='nav-item'><a {% if request.path == '/dashboard/upload/' %} class='nav-link active' {% else %} class='nav-link' {% endif %} href="/dashboard/upload/">Upload</a></li>
-          <li class='nav-item'><a {% if request.path == '/dashboard/payments/' %} class='nav-link active' {% else %} class='nav-link' {% endif %} href="/dashboard/payments/">Payments</a></li>
-          <li class='nav-item'><a class='nav-link' href="{% url 'logout' %}">Logout</a></li>
-        </ul>
-        {% else %}
-        <ul>
-          <li class='nav-item'><a class='nav-link' href="{% url 'login' %}">Login</a></li>
-          <li class='nav-item'><a class='nav-link' href="{% url 'signup' %}">Signup</a></li>
-        </ul>
-        {% endif %}
+          <div class='ht-55 bd-b d-flex flex-row-reverse'>
+            <button class='btn' id='toggle-sidebar' style='height: 100%; min-width: 4rem' id='toggle'>
+              <i class="fas fa-bars"></i>
+            </button> 
+          </div>
+          <ul class="nav nav-pills d-flex flex-column mg-t-15" style='gap: 5px'>
+            <li class=''>
+              <div class="avatar avatar-sm not-expanded mg-l-10"><img src="https://via.placeholder.com/500" class="rounded-circle" alt=""></div>
+              <div class='expanded pd-l-20'>
+                <div class="avatar avatar-md"><img src="https://via.placeholder.com/500" class="rounded-circle" alt=""></div>
+                <div class='tx-bold'> {{ user }}</div>
+              </div>
+            </li>
+            <hr>
+            <p class='tx-bold pd-l-20'>Dashboard</p>
+            <li class='nav-item'>
+              <a
+                {% if request.path == '/dashboard/' %} class='active nav-link d-flex align-items-center'{% endif %}
+                class='nav-link d-flex align-items-center'
+                href="/dashboard/"
+              >
+                <i class="fas fa-home fa-lg"></i>
+                <span>Home</span>
+              </a>
+            </li>
+            <p class='tx-bold pd-l-20'>Orders</p>
+            <li class='nav-item'>
+              <a
+                {% if request.path == '/dashboard/orders/' %} class='active nav-link d-flex align-items-center'{% endif %}
+                class='nav-link d-flex'
+                href="/dashboard/orders/"
+              >
+                <i class="fas fa-folder fa-lg"></i>
+                <span>Manage orders</span>
+              </a>
+            </li>
+            <p class='tx-bold pd-l-20'>Catalog</p>
+            <li class='nav-item'>
+              <a
+                {% if request.path == '/dashboard/catalog/' %} class='active nav-link d-flex align-items-center'{% endif %}
+                class='nav-link d-flex align-items-center'
+                href="/dashboard/catalog/"
+              >
+                <i class="fas fa-store fa-lg"></i>
+                <span>Products</span>
+              </a>
+            </li>
+            <li class='nav-item'>
+              <a
+                {% if request.path == '/dashboard/catalog/create/' %} class='active nav-link d-flex align-items-center'{% endif %}
+                class='nav-link d-flex align-items-center'
+                href="/dashboard/catalog/create/"
+              >
+                <i class="fas fa-plus fa-lg"></i>
+                <span>Create a product</span>
+              </a>
+            </li>
+            <p class='tx-bold pd-l-20'>Uploads</p>
+            <li class='nav-item'>
+              <a
+                {% if request.path == '/dashboard/upload/' %} class='active nav-link d-flex align-items-center'{% endif %}
+                class='nav-link d-flex align-items-center'
+                href="/dashboard/upload/"
+              >
+                <i class="fas fa-upload fa-lg"></i>
+                <span>Upload a file</span>
+              </a>
+            </li>
+            <p class='tx-bold pd-l-20'>Payments</p>
+            <li class='nav-item'>
+              <a
+                {% if request.path == '/dashboard/payments/' %} class='active nav-link d-flex align-items-center'{% endif %}
+                class='nav-link d-flex align-items-center'
+                href="/dashboard/payments/"
+              >
+                <i class="fas fa-file-invoice fa-lg"></i>
+                <span>Invoices</span>
+              </a>
+            </li>
+            <li class='nav-item'>
+              <a
+                {% if request.path == '/dashboard/payments/payment-methods/' %} class='active nav-link d-flex align-items-center'{% endif %}
+                class='nav-link d-flex align-items-center'
+                href="/dashboard/payments/"
+              >
+                <i class="fas fa-money-bill fa-lg"></i>
+                <span>Payment Methods</span>
+              </a>
+            </li>
+            
+          </ul> 
         {% endblock %}
+      </div>
+      <div class='d-flex flex-column' style='width: 100%'>
+        <nav class="navbar navbar-expand-lg bd ht-55 d-flex justify-content-between">
+          <div class="search-form">
+            <input style='border: 0;' type="search" class="form-control" placeholder="Search">
+          </div>
+          <a class='nav-link' href="{% url 'logout' %}">Logout</a>
+        </nav>
+        {% else %}
+        <nav class="navbar navbar-expand-lg bg-gray-100 bd">
+          <a class="navbar-brand tx-bold tx-spacing--2 order-1" href="#">LOGO</a>
+          <button class="navbar-toggler order-2" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <i data-feather="menu" class="wd-20 ht-20"></i>
+          </button>
+
+          <div class="collapse navbar-collapse order-2" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+              <li class="nav-item active">
+                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">About</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Contact</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'login' %}">Sign In</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'signup' %}">Sign Up</a>
+              </li>
+            </ul>
+            <form class="form-inline mg-t-10 mg-lg-0">
+              <input class="form-control wd-150-f mg-r-5" type="search" placeholder="Search" aria-label="Search">
+              <button class="btn btn-primary" type="submit">Search</button>
+            </form>
+          </div>
+        </nav>
+        {% endif %}
+      <div id="content">
+        {% if messages %}
+          {% for message in messages %}
+            <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+        {% comment %} {% bootstrap_messages %} {% endcomment %}
+
+          {% block base_content %}{% endblock %}
+      </div>
     </div>
 
-    <div id="content">
-      {# Display a form #}
-      {% if messages %}
-        {% for message in messages %}
-          <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">{{ message }}</div>
-        {% endfor %}
-      {% endif %}
-      {% comment %} {% bootstrap_messages %} {% endcomment %}
-
-        {% block base_content %}{% endblock %}
-    </div>
     <script src="{% static 'index/main/lib/jquery/jquery.min.js' %}"></script>
     <script src="{% static 'index/main/lib/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'index/main/lib/feather-icons/feather.min.js' %}"></script>
 
     <script src="{% static 'index/main/assets/js/dashforge.js' %}"></script>
-</body>
+    <script>
+      $('#toggle-sidebar').on('click', function(e){
+        const target = $('#sidebar');
+        if (target.hasClass('extend')) {
+          const spans = $('a > span');
+          for (s of spans) {
+            s.style.display = 'none';
+          }
+          const names = $('ul > p');
+          for (s of names) {
+            s.style.display = 'none';
+          }
+          const expanded = $('.expanded');
+          for (s of expanded) {
+            s.style.display = 'none';
+          }
+          const hidden = $('.not-expanded');
+          console.log(hidden)
+          for (s of hidden) {
+            s.style.display = 'block';
+          }
+          $(target).removeClass('extend');
+        } else {
+          const spans = $('a > span');
+          console.log(spans)
+          for (s of spans) {
+            s.style.display = 'block';
+          }
+          const names = $('ul > p');
+          for (s of names) {
+            s.style.display = 'block';
+          }
+          const hidden = $('.not-expanded');
+          console.log(hidden)
+          for (s of hidden) {
+            s.style.display = 'none';
+          }
+          const expanded = $('.expanded');
+          for (s of expanded) {
+            s.style.display = 'block';
+          }
+          $(target).addClass('extend');
+          return;
+        }
+      });
+    </script>
+  </body>
 </html>
